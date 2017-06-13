@@ -1,0 +1,13 @@
+.\i2c_soft.o: ..\APP\i2c_soft.c
+.\i2c_soft.o: ..\APP\i2c_soft.h
+.\i2c_soft.o: ..\CMSIS\CM3\DeviceSupport\ST\STM32F10x\stm32f10x.h
+.\i2c_soft.o: ..\CMSIS\CM3\CoreSupport\core_cm3.h
+.\i2c_soft.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\i2c_soft.o: ..\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.h
+.\i2c_soft.o: ..\USER\stm32f10x_conf.h
+.\i2c_soft.o: ..\Libraries\inc\stm32f10x_gpio.h
+.\i2c_soft.o: ..\CMSIS\CM3\DeviceSupport\ST\STM32F10x\stm32f10x.h
+.\i2c_soft.o: ..\Libraries\inc\stm32f10x_rcc.h
+.\i2c_soft.o: ..\Libraries\inc\stm32f10x_usart.h
+.\i2c_soft.o: ..\Libraries\inc\misc.h
+.\i2c_soft.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\time.h

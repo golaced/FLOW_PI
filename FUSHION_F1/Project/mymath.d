@@ -1,0 +1,12 @@
+.\mymath.o: ..\APP\mymath.c
+.\mymath.o: ..\APP\mymath.h
+.\mymath.o: ..\CMSIS\CM3\DeviceSupport\ST\STM32F10x\stm32f10x.h
+.\mymath.o: ..\CMSIS\CM3\CoreSupport\core_cm3.h
+.\mymath.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\mymath.o: ..\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.h
+.\mymath.o: ..\USER\stm32f10x_conf.h
+.\mymath.o: ..\Libraries\inc\stm32f10x_gpio.h
+.\mymath.o: ..\CMSIS\CM3\DeviceSupport\ST\STM32F10x\stm32f10x.h
+.\mymath.o: ..\Libraries\inc\stm32f10x_rcc.h
+.\mymath.o: ..\Libraries\inc\stm32f10x_usart.h
+.\mymath.o: ..\Libraries\inc\misc.h

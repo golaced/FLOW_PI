@@ -1,0 +1,19 @@
+--cpu Cortex-M3
+".\stm32f10x_it.o"
+".\main.o"
+".\core_cm3.o"
+".\system_stm32f10x.o"
+".\stm32f10x_gpio.o"
+".\stm32f10x_rcc.o"
+".\misc.o"
+".\stm32f10x_usart.o"
+".\stm32f10x_tim.o"
+".\startup_stm32f10x_md.o"
+".\mpu6050.o"
+".\i2c_soft.o"
+".\mymath.o"
+".\delay.o"
+--strict --scatter ".\STM32_DEMO.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\STM32_DEMO.map" -o .\STM32_DEMO.axf
