@@ -21,3 +21,6 @@
 .\main.o: ..\Libraries\inc\stm32f10x_tim.h
 .\main.o: ..\APP\imu.h
 .\main.o: ..\APP\mymath.h
+.\main.o: ..\APP\dma.h
+.\main.o: ..\Libraries\inc\stm32f10x_dma.h
+.\main.o: ..\APP\usart.h

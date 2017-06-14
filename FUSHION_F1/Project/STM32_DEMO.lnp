@@ -1,11 +1,14 @@
 --cpu Cortex-M3
 ".\main.o"
 ".\delay.o"
+".\usart.o"
+".\dma.o"
 ".\stm32f10x_gpio.o"
 ".\stm32f10x_rcc.o"
 ".\misc.o"
 ".\stm32f10x_usart.o"
 ".\stm32f10x_tim.o"
+".\stm32f10x_dma.o"
 ".\stm32f10x_it.o"
 ".\system_stm32f10x.o"
 ".\core_cm3.o"
@@ -15,10 +18,10 @@
 ".\mymath.o"
 ".\imu.o"
 ".\filter.o"
+".\kf_oldx_nav.o"
 ".\rtgetnan.o"
 ".\rtgetinf.o"
 ".\rt_nonfinite.o"
-".\kf_oldx_nav.o"
 --strict --scatter ".\STM32_DEMO.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

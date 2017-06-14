@@ -21,6 +21,10 @@
 .\mpu6050.o: ..\Libraries\inc\stm32f10x_tim.h
 .\mpu6050.o: ..\APP\imu.h
 .\mpu6050.o: ..\APP\mymath.h
+.\mpu6050.o: ..\APP\dma.h
+.\mpu6050.o: ..\Libraries\inc\stm32f10x_dma.h
+.\mpu6050.o: ..\APP\usart.h
+.\mpu6050.o: ..\APP\include.h
 .\mpu6050.o: ..\APP\mymath.h
 .\mpu6050.o: ..\APP\i2c_soft.h
 .\mpu6050.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\time.h

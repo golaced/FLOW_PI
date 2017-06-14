@@ -1,6 +1,7 @@
 #include "include.h"
+#include "usart.h"
 
-float dt_mems,dt_imu;
+float dt_mems,dt_imu,dt_fushion,dt_uart;
 int main(void)
 {static u8 cnt[10];
 		//--------------------------- CLK INIT, HSE PLL ----------------------------
@@ -41,6 +42,12 @@ int main(void)
 		TIM5_Config();
 		Cycle_Time_Init();
 		MPU6050_Init(20);
+		UART_PI_CONFIG(115200);
+		UART_FLOW_CONFIG(115200);
+		UART_UP_CONFIG(115200);
+		MYDMA_Config(DMA1_Channel2,(u32)&USART3->DR,(u32)SendBuff,TEXT_LENTH);//DMA1通道4,外设为串口1,存储器为SendBuff,长(TEXT_LENTH+2)*100.
+	  USART_DMACmd(USART3,USART_DMAReq_Tx,ENABLE);      
+   	MYDMA_Enable(DMA1_Channel2);  	
 		//等待中断
 		while(1)
 		{
@@ -51,15 +58,37 @@ int main(void)
 	  MPU6050_Data_Prepare( dt_mems );			
 		
 			
-			
+		//imu
     if(cnt[0]++>2){cnt[0]=0;		
 		dt_imu=(float)Get_Cycle_T(1)/1000000.;		
-		IMUupdate(0.5f *dt_imu,mpu6050_fc.Gyro_deg.x, mpu6050_fc.Gyro_deg.y, mpu6050_fc.Gyro_deg.z, mpu6050_fc.Acc.x, mpu6050_fc.Acc.y, mpu6050_fc.Acc.z,
+		IMUupdate(0.5f *dt_imu,mpu6050_fc.Gyro_deg.x, mpu6050_fc.Gyro_deg.y, mpu6050_fc.Gyro_deg.z, 
+			mpu6050_fc.Acc.x, mpu6050_fc.Acc.y, mpu6050_fc.Acc.z,
 	    0,0,0,
 			&Roll,&Pitch,&Yaw);
 		}
-	
+	  //fushion
+		if(cnt[1]++>3){cnt[1]=0;		
+		dt_fushion=(float)Get_Cycle_T(2)/1000000.;		
 		
+		}
+		
+		//uart
+		if(cnt[2]++>3){cnt[2]=0;		
+		dt_uart=(float)Get_Cycle_T(3)/1000000.;		
+		
+			
+					if(DMA_GetFlagStatus(DMA1_FLAG_TC2)!=RESET)//等待通道4传输完成
+					{
+					DMA_ClearFlag(DMA1_FLAG_TC2);//清除通道4传输完成标志
+					SendBuff_cnt=0;
+
+					data_per_uart(
+					0,0,0,
+					0,0,0,
+					0,0,0,
+					(int16_t)(Yaw*10),(int16_t)(Pitch*10.0),(int16_t)(Roll*10.0),0,0,0/10,0);break;	
+					}	
+		}
 		
 		Delay_ms(3);
 		}

@@ -1,0 +1,13 @@
+.\dma.o: ..\APP\dma.c
+.\dma.o: ..\APP\dma.h
+.\dma.o: ..\CMSIS\CM3\DeviceSupport\ST\STM32F10x\stm32f10x.h
+.\dma.o: ..\CMSIS\CM3\CoreSupport\core_cm3.h
+.\dma.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\dma.o: ..\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.h
+.\dma.o: ..\USER\stm32f10x_conf.h
+.\dma.o: ..\Libraries\inc\stm32f10x_gpio.h
+.\dma.o: ..\CMSIS\CM3\DeviceSupport\ST\STM32F10x\stm32f10x.h
+.\dma.o: ..\Libraries\inc\stm32f10x_rcc.h
+.\dma.o: ..\Libraries\inc\stm32f10x_usart.h
+.\dma.o: ..\Libraries\inc\misc.h
+.\dma.o: ..\Libraries\inc\stm32f10x_dma.h

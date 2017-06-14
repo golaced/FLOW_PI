@@ -21,4 +21,7 @@
 .\imu.o: ..\APP\include.h
 .\imu.o: ..\APP\delay.h
 .\imu.o: ..\Libraries\inc\stm32f10x_tim.h
+.\imu.o: ..\APP\dma.h
+.\imu.o: ..\Libraries\inc\stm32f10x_dma.h
+.\imu.o: ..\APP\usart.h
 .\imu.o: ..\APP\mymath.h

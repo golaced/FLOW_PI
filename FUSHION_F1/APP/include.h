@@ -157,5 +157,6 @@ enum
 #include "mpu6050.h"
 #include "delay.h"
 #include "imu.h"
-
+#include "dma.h"
+#include "usart.h"
 #endif /* __INCLUDE_H */
