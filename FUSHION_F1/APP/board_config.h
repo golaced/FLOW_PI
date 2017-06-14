@@ -11,7 +11,7 @@
 #ifndef __BOARD_CONFIG_H
 #define	__BOARD_CONFIG_H
 
-#include "include.h"
+
 
 typedef struct
 {
@@ -31,23 +31,23 @@ typedef struct
 
 typedef struct 
 {
-  s16 x;
-	s16 y;
-	s16 z;
+  int16_t x;
+	int16_t y;
+	int16_t z;
 
 }xyz_s16_t;
 
 
 typedef union
 {
-	uint8_t raw_data[64];
+	char raw_data[64];
 	struct
 	{
 		xyz_f_t Accel;
 		xyz_f_t Gyro;
 		xyz_f_t Mag;
 		xyz_f_t vec_3d_cali;
-		uint32_t mpu_flag;
+		unsigned int mpu_flag;
 		float Acc_Temperature;
 		float Gyro_Temperature;
 	}Offset;

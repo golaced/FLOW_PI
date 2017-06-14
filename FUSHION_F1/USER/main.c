@@ -1,8 +1,8 @@
 #include "include.h"
 
-float dt_mems;
+float dt_mems,dt_imu;
 int main(void)
-{
+{static u8 cnt[10];
 		//--------------------------- CLK INIT, HSE PLL ----------------------------
 		ErrorStatus HSEStartUpStatus;
 		//RCC reset
@@ -45,9 +45,23 @@ int main(void)
 		while(1)
 		{
 		dt_mems=(float)Get_Cycle_T(0)/1000000.;	
-		MPU6050_Read(); 															//??mpu6????
-	  MPU6050_Data_Prepare( dt_mems );			//mpu6????????
-		Delay_ms(2);
+			
+			
+		MPU6050_Read(); 															
+	  MPU6050_Data_Prepare( dt_mems );			
+		
+			
+			
+    if(cnt[0]++>2){cnt[0]=0;		
+		dt_imu=(float)Get_Cycle_T(1)/1000000.;		
+		IMUupdate(0.5f *dt_imu,mpu6050_fc.Gyro_deg.x, mpu6050_fc.Gyro_deg.y, mpu6050_fc.Gyro_deg.z, mpu6050_fc.Acc.x, mpu6050_fc.Acc.y, mpu6050_fc.Acc.z,
+	    0,0,0,
+			&Roll,&Pitch,&Yaw);
+		}
+	
+		
+		
+		Delay_ms(3);
 		}
 }
 

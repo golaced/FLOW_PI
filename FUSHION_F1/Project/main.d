@@ -11,11 +11,13 @@
 .\main.o: ..\Libraries\inc\stm32f10x_usart.h
 .\main.o: ..\Libraries\inc\misc.h
 .\main.o: ..\APP\board_config.h
-.\main.o: ..\APP\include.h
 .\main.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\main.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\main.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\main.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\main.o: ..\APP\mpu6050.h
+.\main.o: ..\APP\include.h
 .\main.o: ..\APP\delay.h
 .\main.o: ..\Libraries\inc\stm32f10x_tim.h
+.\main.o: ..\APP\imu.h
+.\main.o: ..\APP\mymath.h

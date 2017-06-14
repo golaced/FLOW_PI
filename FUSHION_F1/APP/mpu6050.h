@@ -2,7 +2,7 @@
 #define _MPU6050_H
 
 #include "stm32f10x.h"
-
+#include "board_config.h"
 #include "include.h"
 
 #define GYRO_DEATH_ZOOM 20   //  20 / 65536

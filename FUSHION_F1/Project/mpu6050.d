@@ -10,7 +10,6 @@
 .\mpu6050.o: ..\Libraries\inc\stm32f10x_rcc.h
 .\mpu6050.o: ..\Libraries\inc\stm32f10x_usart.h
 .\mpu6050.o: ..\Libraries\inc\misc.h
-.\mpu6050.o: ..\APP\include.h
 .\mpu6050.o: ..\APP\board_config.h
 .\mpu6050.o: ..\APP\include.h
 .\mpu6050.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
@@ -20,6 +19,8 @@
 .\mpu6050.o: ..\APP\mpu6050.h
 .\mpu6050.o: ..\APP\delay.h
 .\mpu6050.o: ..\Libraries\inc\stm32f10x_tim.h
+.\mpu6050.o: ..\APP\imu.h
+.\mpu6050.o: ..\APP\mymath.h
 .\mpu6050.o: ..\APP\mymath.h
 .\mpu6050.o: ..\APP\i2c_soft.h
 .\mpu6050.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\time.h

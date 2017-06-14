@@ -1,6 +1,8 @@
 #ifndef __INCLUDE_H
 #define	__INCLUDE_H
 
+
+
 typedef unsigned short uint16_t;
 typedef unsigned char  uint8_t;
 typedef unsigned char  uint8;                   /* defined for unsigned 8-bits integer variable 	无符号8位整型变量  */
@@ -154,4 +156,6 @@ enum
 
 #include "mpu6050.h"
 #include "delay.h"
+#include "imu.h"
+
 #endif /* __INCLUDE_H */
