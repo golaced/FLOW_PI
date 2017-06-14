@@ -128,8 +128,11 @@ void UART_UP_CONFIG(u32 bound){
 
 
 //------------------------------------------------------------------
+float flow_origin_pi[2];
+CIRCLE circle;
+float mark_map[10][5];//x y z yaw id
 void Data_Receive_Anl1(u8 *data_buf,u8 num)
-{
+{ static u8 led;
 	vs16 rc_value_temp;
 	u8 sum = 0;
 	u8 i;
@@ -137,26 +140,123 @@ void Data_Receive_Anl1(u8 *data_buf,u8 num)
 		sum += *(data_buf+i);
 	if(!(sum==*(data_buf+num-1)))		return;		//??sum
 	if(!(*(data_buf)==0xAA && *(data_buf+1)==0xAF))		return;		//????
-
-  if(*(data_buf+2)==0x03)//RC_PWM
-  { 
-
+  if(*(data_buf+2)==0x21)//QR
+  {
+	SetPB9(led);
+  led=!led;		
+	circle.connect=1;
+	circle.lose_cnt=0;
+	circle.check=(*(data_buf+4));///10.;
+	circle.x=(int16_t)((*(data_buf+5)<<8)|*(data_buf+6));
+	circle.y=(int16_t)((*(data_buf+7)<<8)|*(data_buf+8));
+	circle.z=(int16_t)((*(data_buf+9)<<8)|*(data_buf+10));
+	circle.pit=(int16_t)((*(data_buf+11)<<8)|*(data_buf+12));
+	circle.rol=(int16_t)((*(data_buf+13)<<8)|*(data_buf+14));
+	circle.yaw=To_180_degrees((int16_t)((*(data_buf+15)<<8)|*(data_buf+16))-90+circle.yaw_off);	
+	flow_origin_pi[0]=circle.spdx=(int16_t)((*(data_buf+17)<<8)|*(data_buf+18));
+	flow_origin_pi[1]=circle.spdy=(int16_t)((*(data_buf+19)<<8)|*(data_buf+20));
+	//map	
+	mark_map[0][0]=(int16_t)((*(data_buf+21)<<8)|*(data_buf+22));
+	mark_map[0][1]=(int16_t)((*(data_buf+23)<<8)|*(data_buf+24));
+	mark_map[0][2]=(int16_t)((*(data_buf+25)<<8)|*(data_buf+26));
+	mark_map[0][3]=(int16_t)((*(data_buf+27)<<8)|*(data_buf+28));
+	mark_map[0][4]=*(data_buf+29);
+	mark_map[1][0]=(int16_t)((*(data_buf+30)<<8)|*(data_buf+31));
+	mark_map[1][1]=(int16_t)((*(data_buf+32)<<8)|*(data_buf+33));
+	mark_map[1][2]=(int16_t)((*(data_buf+34)<<8)|*(data_buf+35));
+	mark_map[1][3]=(int16_t)((*(data_buf+36)<<8)|*(data_buf+37));
+	mark_map[1][4]=*(data_buf+38);
+	}	
+	else if(*(data_buf+2)==0x22)//QR MAP2
+	{
+	mark_map[2][0]=(int16_t)((*(data_buf+4)<<8)|*(data_buf+5));
+	mark_map[2][1]=(int16_t)((*(data_buf+6)<<8)|*(data_buf+7));
+	mark_map[2][2]=(int16_t)((*(data_buf+8)<<8)|*(data_buf+9));
+	mark_map[2][3]=(int16_t)((*(data_buf+10)<<8)|*(data_buf+11));
+	mark_map[2][4]=*(data_buf+12);
+	mark_map[3][0]=(int16_t)((*(data_buf+13)<<8)|*(data_buf+14));
+	mark_map[3][1]=(int16_t)((*(data_buf+15)<<8)|*(data_buf+16));
+	mark_map[3][2]=(int16_t)((*(data_buf+17)<<8)|*(data_buf+18));
+	mark_map[3][3]=(int16_t)((*(data_buf+19)<<8)|*(data_buf+20));
+	mark_map[3][4]=*(data_buf+21);
+	mark_map[4][0]=(int16_t)((*(data_buf+22)<<8)|*(data_buf+23));
+	mark_map[4][1]=(int16_t)((*(data_buf+24)<<8)|*(data_buf+25));
+	mark_map[4][2]=(int16_t)((*(data_buf+26)<<8)|*(data_buf+27));
+	mark_map[4][3]=(int16_t)((*(data_buf+28)<<8)|*(data_buf+29));
+	mark_map[4][4]=*(data_buf+30);	
+	mark_map[5][0]=(int16_t)((*(data_buf+31)<<8)|*(data_buf+32));
+	mark_map[5][1]=(int16_t)((*(data_buf+33)<<8)|*(data_buf+34));
+	mark_map[5][2]=(int16_t)((*(data_buf+35)<<8)|*(data_buf+36));
+	mark_map[5][3]=(int16_t)((*(data_buf+37)<<8)|*(data_buf+38));
+	mark_map[5][4]=*(data_buf+39);
 	}
-	
+		
 }
 
 
+
+u8 RxBuffer1[50];
+u8 RxState1 = 0;
+u8 RxBufferNum1 = 0;
+u8 RxBufferCnt1 = 0;
+u8 RxLen1 = 0;
+static u8 _data_len1 = 0,_data_cnt1 = 0;
 void USART1_IRQHandler(void)                	//串口1中断服务程序
 	{
-	u8 Res;
+		
+	u8 com_data;
+		if(USART1->SR & USART_SR_ORE)//ORE??
+	{
+		com_data = USART1->DR;
+	}
+	
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
 		{
-		Res =USART_ReceiveData(USART1);	//读取接收到的数据
-		
+		com_data =USART_ReceiveData(USART1);	//读取接收到的数据
+		if(RxState1==0&&com_data==0xAA)
+		{
+			RxState1=1;
+			RxBuffer1[0]=com_data;
+		}
+		else if(RxState1==1&&com_data==0xAF)
+		{
+			RxState1=2;
+			RxBuffer1[1]=com_data;
+		}
+		else if(RxState1==2&&com_data>0&&com_data<0XF1)
+		{
+			RxState1=3;
+			RxBuffer1[2]=com_data;
+		}
+		else if(RxState1==3&&com_data<50)//MAX_send num==50
+		{
+			RxState1 = 4;
+			RxBuffer1[3]=com_data;
+			_data_len1 = com_data;
+			_data_cnt1 = 0;
+		}
+		else if(RxState1==4&&_data_len1>0)
+		{
+			_data_len1--;
+			RxBuffer1[4+_data_cnt1++]=com_data;
+			if(_data_len1==0)
+				RxState1 = 5;
+		}
+		else if(RxState1==5)
+		{
+			RxState1 = 0;
+			RxBuffer1[4+_data_cnt1]=com_data;
+			Data_Receive_Anl1(RxBuffer1,_data_cnt1+5);
+		}
+		else
+			RxState1 = 0;
 		 
      } 
 } 
+	
+	
 
+float flow_origin[2];
 void Data_Receive_Anl2(u8 *data_buf,u8 num)
 {
 	vs16 rc_value_temp;
@@ -165,21 +265,21 @@ void Data_Receive_Anl2(u8 *data_buf,u8 num)
 	for( i=0;i<(num-1);i++)
 		sum += *(data_buf+i);
 	if(!(sum==*(data_buf+num-1)))		return;		//??sum
-	if(!(*(data_buf)==0xAA && *(data_buf+1)==0xAF))		return;		//????
+	if(!(*(data_buf)==0xCA && *(data_buf+1)==0xCF))		return;		//????
 
-  if(*(data_buf+2)==0x03)//RC_PWM
+  if(*(data_buf+2)==0x01)//RC_PWM
   { 
-
+   flow_origin[1]=-(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+   flow_origin[0]=-(float)((int16_t)(*(data_buf+6)<<8)|*(data_buf+7))/1000.;
 	}
 	
 }
-u8 Rx_Buf[256];	//??????
+
 u8 RxBuffer[50];
 u8 RxState = 0;
 u8 RxBufferNum = 0;
 u8 RxBufferCnt = 0;
 u8 RxLen = 0;
-u8 com_data ;
 static u8 _data_len = 0,_data_cnt = 0;
 void USART2_IRQHandler(void)                	//串口1中断服务程序
 	{
@@ -193,12 +293,12 @@ void USART2_IRQHandler(void)                	//串口1中断服务程序
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
 		{
 		com_data =USART_ReceiveData(USART2);	//读取接收到的数据
-					if(RxState==0&&com_data==0xAA)
+		if(RxState==0&&com_data==0xCA)
 		{
 			RxState=1;
 			RxBuffer[0]=com_data;
 		}
-		else if(RxState==1&&com_data==0xAF)
+		else if(RxState==1&&com_data==0xCF)
 		{
 			RxState=2;
 			RxBuffer[1]=com_data;

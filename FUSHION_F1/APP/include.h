@@ -130,6 +130,9 @@ enum
 #define FALSE 0
 #define TRUE  1
 
+#define X 0
+#define Y 1
+
 #define IMU_HML_ADD_500 1           
 #define ACC_ADJ_EN 									//是否允许校准加速度计,(定义则允许)
 
@@ -159,4 +162,6 @@ enum
 #include "imu.h"
 #include "dma.h"
 #include "usart.h"
+
+void SetPB9(u8 sta);
 #endif /* __INCLUDE_H */

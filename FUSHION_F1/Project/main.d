@@ -24,3 +24,6 @@
 .\main.o: ..\APP\dma.h
 .\main.o: ..\Libraries\inc\stm32f10x_dma.h
 .\main.o: ..\APP\usart.h
+.\main.o: ..\APP\filter.h
+.\main.o: ..\APP\stmflash.h
+.\main.o: ..\Libraries\inc\stm32f10x_flash.h

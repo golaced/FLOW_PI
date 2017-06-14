@@ -364,6 +364,7 @@ while(1)
 								for(i=0;i<JUGG_BUF;i++)SendBuff2[SendBuff2_cnt++]=p[i];		//dma传输1次等于4字节,所以乘以4.
 								#endif
 						  	}else{
+								Send_FLOW();	
 							  data_per_uart1(pixel_flow_x_sad*100,pixel_flow_x_sadt*100,pixel_flow_x_klt*100,													 
 								pixel_flow_y_sad*100,pixel_flow_y_sadt*100,pixel_flow_y_klt*100,				//flow.integrated_x*100,1*flow.integrated_xgyro*100,0*flow.h_x_pix*100,															
 								pixel_flow_x*100,pixel_flow_y*100,0*flow.h_y_pix*0,

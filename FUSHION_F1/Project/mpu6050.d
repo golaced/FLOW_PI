@@ -28,3 +28,5 @@
 .\mpu6050.o: ..\APP\mymath.h
 .\mpu6050.o: ..\APP\i2c_soft.h
 .\mpu6050.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\time.h
+.\mpu6050.o: ..\APP\stmflash.h
+.\mpu6050.o: ..\Libraries\inc\stm32f10x_flash.h

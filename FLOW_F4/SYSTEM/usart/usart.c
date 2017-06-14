@@ -214,33 +214,29 @@ u16 i;
 
 #include "flow.h"
 void Send_FLOW(void)
-{u8 i;	u8 sum = 0;
+{u16 i;	u8 sum = 0;
 	u8 data_to_send[50];
-	u8 _cnt=0;
+	u16 _cnt=SendBuff2_cnt;
 	vs16 _temp;
-  data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=0xAF;
-	data_to_send[_cnt++]=0x01;//???
-	data_to_send[_cnt++]=0;//???
+  SendBuff2[SendBuff2_cnt++]=0xCA;
+	SendBuff2[SendBuff2_cnt++]=0xCF;
+	SendBuff2[SendBuff2_cnt++]=0x01;//???
+	SendBuff2[SendBuff2_cnt++]=0;//???
 	
-	_temp = (vs16)(flow.x_kf[1]*1000);//ultra_distance;
-	data_to_send[_cnt++]=BYTE1(_temp);
-	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = (vs16)(flow.x_kf[0]*1000);//ultra_distance;
-	data_to_send[_cnt++]=BYTE1(_temp);
-	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = (vs16)(ALT_POS_SONAR*1000);//ultra_distance;
-	data_to_send[_cnt++]=BYTE1(_temp);
-	data_to_send[_cnt++]=BYTE0(_temp);
-	
-	
-	data_to_send[3] = _cnt-4;
+	_temp = (vs16)(pixel_flow_x*1000);//ultra_distance;
+	SendBuff2[SendBuff2_cnt++]=BYTE1(_temp);
+	SendBuff2[SendBuff2_cnt++]=BYTE0(_temp);
+	_temp = (vs16)(pixel_flow_y*1000);//ultra_distance;
+	SendBuff2[SendBuff2_cnt++]=BYTE1(_temp);
+	SendBuff2[SendBuff2_cnt++]=BYTE0(_temp);
 
-	for( i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	data_to_send[_cnt++] = sum;
 	
-	Send_Data_FLOW(data_to_send, _cnt);
+	SendBuff2[3] = SendBuff2_cnt-_cnt-4;
+
+	for( i=_cnt;i<SendBuff2_cnt;i++)
+		sum += SendBuff2[i];
+	SendBuff2[SendBuff2_cnt++] = sum;
+	
 }
 
 

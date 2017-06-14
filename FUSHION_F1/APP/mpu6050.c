@@ -1,6 +1,7 @@
 #include "mpu6050.h"
 #include "mymath.h"
 #include "i2c_soft.h"
+#include "stmflash.h"
 u8 need_init_mems;
 sensor_setup_t sensor_setup;
 MPU6050_STRUCT mpu6050_fc;
@@ -200,6 +201,13 @@ void MPU6050_Init(u16 lpf)
     Delay_ms(10);
     MPU6050_setI2CBypassEnabled(1);	 //主控制器的I2C与	MPU6050的AUXI2C	直通。控制器可以直接访问HMC5883L
     Delay_ms(10);	
+		
+		mpu6050_fc.Gyro_Offset.x=-49;
+		mpu6050_fc.Gyro_Offset.y=5.4;
+		mpu6050_fc.Gyro_Offset.z=-23;
+		mpu6050_fc.Acc_Offset.x=112;
+		mpu6050_fc.Acc_Offset.y=43;
+		mpu6050_fc.Acc_Offset.z=341;
 }
 
 s32 sum_temp[7]= {0,0,0,0,0,0,0};
@@ -265,7 +273,7 @@ void MPU6050_Data_Offset()
             gyro_sum_cnt =0;need_init_mems=0;
             if(mpu6050_fc.Gyro_CALIBRATE == 1)
 			{
-               //WRITE_PARM();
+              // WRITE_PARM();
 			}  
             mpu6050_fc.Gyro_CALIBRATE = 0;
             sum_temp[G_X] = sum_temp[G_Y] = sum_temp[G_Z] = sum_temp[TEM] = 0;
