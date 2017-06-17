@@ -1,7 +1,7 @@
 #ifndef _UKF_TASK_H
 #define _UKF_TASK_H
 
-#include "stm32f4xx.h"
+#include "stm32f10x.h"
 #define NAV_MIN_GPS_ACC		3.0f					    // minimum gps hAcc needed to enter auto nav modes, in meters
 #define NAV_MAX_GPS_AGE		1e6					    // maximum age of position update needed to enter auto nav modes, in microseconds
 #define NAV_MIN_FIX_ACC		4.0f					    // minimum gps hAcc still considered a valid "2D" fix, in meters
@@ -20,7 +20,7 @@
 #define DEG_TO_RAD		(M_PI / 180.0f)
 
 extern float K_spd_flow;
-extern  double X_ukf[6],X_ukf_nav[9],X_ukf_all[9];
+extern  double X_ukf[6],X_ukf_nav[9],X_ukf_all[9],X_ukf_baro[6];;
 extern double X_KF_NAV[2][3];
 extern float X_ukf_Pos[2];
 extern float velEast,velNorth, velNorth_gps,velEast_gps;;

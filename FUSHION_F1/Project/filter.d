@@ -24,5 +24,6 @@
 .\filter.o: ..\APP\dma.h
 .\filter.o: ..\Libraries\inc\stm32f10x_dma.h
 .\filter.o: ..\APP\usart.h
+.\filter.o: ..\APP\sonar.h
 .\filter.o: ..\APP\filter.h
 .\filter.o: ..\APP\mymath.h

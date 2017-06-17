@@ -162,6 +162,9 @@ enum
 #include "imu.h"
 #include "dma.h"
 #include "usart.h"
-
+#include "sonar.h"
 void SetPB9(u8 sta);
+
+extern float acc_flt[3];
+extern float flow_flt[3];
 #endif /* __INCLUDE_H */

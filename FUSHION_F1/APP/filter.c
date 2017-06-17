@@ -2,80 +2,55 @@
 #include "filter.h"
 #include "mymath.h"
 
-s32 Moving_Median(s32 moavarray[],u16 len ,u16 *fil_p,s32 in)
-{
-	u16 width_num;
-	u16 now_p;
-	float t;
-	s8 pn=0;
-	u16 start_p,i;
-	s32 sum = 0;
+#define MED_WIDTH_NUM 50
+#define MED_FIL_ITEM  30
 
-	width_num = len ;
+float med_filter_tmp[MED_FIL_ITEM][MED_WIDTH_NUM ];
+float med_filter_out[MED_FIL_ITEM];
+
+u8 med_fil_cnt[MED_FIL_ITEM];
+// 1  2  3                                9
+float Moving_Median(u8 item,u8 width_num,float in)
+{
+	u8 i,j;
+	float t;
+	float tmp[MED_WIDTH_NUM];
 	
-	if( ++*fil_p >= width_num )	
+	if(item >= MED_FIL_ITEM || width_num >= MED_WIDTH_NUM )
 	{
-		*fil_p = 0; //now
-	}
-	
-	now_p = *fil_p ;	
-	
-	moavarray[ *fil_p ] = in;
-	
-	if(now_p<width_num-1) //保证比较不越界
-	{
-		while(moavarray[now_p] > moavarray[now_p + 1])
-		{
-			t = moavarray[now_p];
-			moavarray[now_p] = moavarray[now_p + 1];
-			moavarray[now_p + 1] = t;
-			pn = 1;
-			now_p ++;
-			if(now_p == (width_num-1))
-			{
-				break;
-			}
-		}
-	}
-	
-	if(now_p>0)  //保证比较不越界
-	{
-		while(moavarray[now_p] < moavarray[now_p - 1])
-		{
-			t = moavarray[now_p];
-			moavarray[now_p] = moavarray[now_p - 1];
-			moavarray[now_p - 1] = t;
-			pn = -1;
-			now_p--;
-			if(now_p == 0)
-			{
-				break;
-			}
-		}
-	
-	}
-	
-	if(*fil_p == 0 && pn == 1)
-	{
-		*fil_p = width_num - 1;
-	}
-	else if(*fil_p == width_num - 1 && pn == -1)
-	{
-		*fil_p = 0;
+		return 0;
 	}
 	else
 	{
-		*fil_p -= pn;
-	}
-	
-	start_p = (u16)(0.25f * width_num );
-	for(i = 0; i < width_num/2;i++)
-	{
-		sum += moavarray[start_p + i];
-	}
-	return (sum/(width_num/2));
-}
+		if( ++med_fil_cnt[item] >= width_num )	
+		{
+			med_fil_cnt[item] = 0;
+		}
+		
+		med_filter_tmp[item][ med_fil_cnt[item] ] = in;
+		
+		for(i=0;i<width_num;i++)
+		{
+			tmp[i] = med_filter_tmp[item][i];
+		}
+		
+		for(i=0;i<width_num-1;i++)
+		{
+			for(j=0;j<(width_num-1-i);j++)
+			{
+				if(tmp[j] > tmp[j+1])
+				{
+					t = tmp[j];
+					tmp[j] = tmp[j+1];
+					tmp[j+1] = t;
+				}
+			}
+		}
 
+		
+		return ( tmp[(u16)width_num/2] );
+	}
+}
 
 
 void simple_3d_trans(_xyz_f_t *ref, _xyz_f_t *in, _xyz_f_t *out) //小范围内正确。
@@ -197,4 +172,125 @@ float firstOrderFilter(float input, struct firstOrderFilterData *filterParameter
     filterParameters->previousOutput = output;
 
     return output;
+}
+
+
+u16 Distance[50]  = {0};
+u8 measure_num=8;
+float sonar_filter_oldx(float in) 
+{
+   
+    u8 IS_success =1;
+    u16 Distance1 = 0;
+    u16 MAX_error1 = 0;
+    u8 MAX_error_targe = 0;
+    u8 count = 0;
+    u8 i =0;
+    u8 j =0;
+    u8 num =0;  //Êµ¼ÊÖ»²âµ½µÄ´ÎÊý
+    Distance[measure_num-1]=in*1000;
+    for(i=0;i<measure_num-1;i++)
+		{
+		 Distance[i]=Distance[i+1]; 
+		}
+
+   
+         //ÅÅÐò
+        for(i = 0 ; i < measure_num-1 ; i++)
+        {
+
+            for(j = 0 ; j < measure_num-1-i; j++)       
+            {
+                if(Distance[j] > Distance[j+1] )
+                {
+                    Distance1 = Distance[j];
+                    Distance[j] =  Distance[j+1];
+                    Distance[j+1] = Distance1; 
+                }
+            }
+
+        }
+
+        //ÕÒ³ö×î´ó²î¾à
+        MAX_error1 = Distance[1] - Distance[0];
+        for(i = 1 ; i < measure_num-1 ; i++)
+        {
+
+            if(MAX_error1 < Distance[i+1] - Distance[i] )//Èç£º1 2 3 4 5    8 9 10    MAX_error_targe=4;
+            {
+                MAX_error1 =  Distance[i+1] - Distance[i];//×î´ó²î¾à
+                MAX_error_targe = i;  //¼ÇÏÂ×î´ó²î¾àÖµµÄÎ»ÖÃ£¨Õâ×éÊýÖÐµÄÎ»ÖÃ£©
+            }
+
+        }
+        float UltrasonicWave_Distance1=0;
+        //È¡³ö×îÖÕÖµ
+        if(MAX_error_targe+1 > (measure_num+1)/2) //Ç°²¿·ÖÓÐÐ§  1 2 3 4 5    8 9 10  (Èç¹ûÎ»ÓÚÖÐ¼ä£¬ºó°ë²¿ÓÅÏÈ)
+        {
+            for(i = 0 ; i <= MAX_error_targe ; i++)
+            {
+                UltrasonicWave_Distance1 += Distance[i];
+            }
+
+            UltrasonicWave_Distance1 /= (MAX_error_targe+1);//È¡Æ½¾ù
+
+        }
+        else  //ºó²¿·ÖÓÐÐ§  1 2 3   7 8 9 10
+        {
+             for(i = MAX_error_targe + 1 ; i < measure_num ; i++)
+            {
+                UltrasonicWave_Distance1 += Distance[i];
+            }
+
+            UltrasonicWave_Distance1 /= (measure_num - MAX_error_targe -1);//È¡Æ½¾ù
+
+        }
+
+
+    return  (float)UltrasonicWave_Distance1/1000.; //×ª»¯ÎªÃ×Îªµ¥Î»µÄ¸¡µãÊý
+}
+
+
+
+static float sonar_values[3] = { 0.0f };
+static unsigned insert_index = 0;
+
+static void sonar_bubble_sort(float sonar_values[], unsigned n);
+
+void sonar_bubble_sort(float sonar_values[], unsigned n)
+{
+	float t;
+
+	for (unsigned i = 0; i < (n - 1); i++) {
+		for (unsigned j = 0; j < (n - i - 1); j++) {
+			if (sonar_values[j] > sonar_values[j+1]) {
+				/* swap two values */
+				t = sonar_values[j];
+				sonar_values[j] = sonar_values[j + 1];
+				sonar_values[j + 1] = t;
+			}
+		}
+	}
+}
+
+float insert_sonar_value_and_get_mode_value(float insert)
+{
+	const unsigned sonar_count = sizeof(sonar_values) / sizeof(sonar_values[0]);
+
+	sonar_values[insert_index] = insert;
+	insert_index++;
+	if (insert_index == sonar_count) {
+		insert_index = 0;
+	}
+
+	/* sort and return mode */
+
+	/* copy ring buffer */
+	float sonar_temp[sonar_count];
+	memcpy(sonar_temp, sonar_values, sizeof(sonar_values));
+
+	sonar_bubble_sort(sonar_temp, sonar_count);
+
+	/* the center element represents the mode after sorting */
+	return sonar_temp[sonar_count / 2];
 }

@@ -442,6 +442,11 @@
               <FileType>1</FileType>
               <FilePath>..\Libraries\src\stm32f10x_flash.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f10x_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\src\stm32f10x_exti.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -482,6 +487,11 @@
               <FileType>1</FileType>
               <FilePath>..\APP\i2c_soft.c</FilePath>
             </File>
+            <File>
+              <FileName>sonar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\sonar.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -507,6 +517,11 @@
         <Group>
           <GroupName>Fusion</GroupName>
           <Files>
+            <File>
+              <FileName>ukf_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FUSHION\ukf_task.c</FilePath>
+            </File>
             <File>
               <FileName>KF_OLDX_NAV.c</FileName>
               <FileType>1</FileType>

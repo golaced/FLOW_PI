@@ -1,5 +1,6 @@
 #include "sys.h"
 #include "usart.h"	
+#include "mpu6050.h"	
 ////////////////////////////////////////////////////////////////////////////////// 	 
 //如果使用ucos,则包括下面的头文件即可.
 #if SYSTEM_SUPPORT_OS
@@ -196,6 +197,88 @@ void USART1_IRQHandler(void)
 
 }
 
+
+
+MPU6050_STRUCT mpu6050_fc;
+
+void Data_Receive_Anl2(u8 *data_buf,u8 num)
+{
+	vs16 rc_value_temp;
+	u8 sum = 0;
+	u8 i;
+	for( i=0;i<(num-1);i++)
+		sum += *(data_buf+i);
+	if(!(sum==*(data_buf+num-1)))		return;		//??sum
+	if(!(*(data_buf)==0xAA && *(data_buf+1)==0xAF))		return;		//????
+
+  if(*(data_buf+2)==0x01)//RC_PWM
+  { 
+   mpu6050_fc.Gyro_deg.x=-(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/10.;
+   mpu6050_fc.Gyro_deg.y=-(float)((int16_t)(*(data_buf+6)<<8)|*(data_buf+7))/10.;
+	 mpu6050_fc.Gyro_deg.z=-(float)((int16_t)(*(data_buf+8)<<8)|*(data_buf+9))/10.;
+	}
+	
+}
+
+u8 RxBuffer[50];
+u8 RxState = 0;
+u8 RxBufferNum = 0;
+u8 RxBufferCnt = 0;
+u8 RxLen = 0;
+static u8 _data_len = 0,_data_cnt = 0;
+void USART2_IRQHandler(void)                	//串口1中断服务程序
+	{
+		
+	u8 com_data;
+		if(USART2->SR & USART_SR_ORE)//ORE??
+	{
+		com_data = USART2->DR;
+	}
+	
+	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
+		{
+		com_data =USART_ReceiveData(USART2);	//读取接收到的数据
+		if(RxState==0&&com_data==0xAA)
+		{
+			RxState=1;
+			RxBuffer[0]=com_data;
+		}
+		else if(RxState==1&&com_data==0xAF)
+		{
+			RxState=2;
+			RxBuffer[1]=com_data;
+		}
+		else if(RxState==2&&com_data>0&&com_data<0XF1)
+		{
+			RxState=3;
+			RxBuffer[2]=com_data;
+		}
+		else if(RxState==3&&com_data<50)//MAX_send num==50
+		{
+			RxState = 4;
+			RxBuffer[3]=com_data;
+			_data_len = com_data;
+			_data_cnt = 0;
+		}
+		else if(RxState==4&&_data_len>0)
+		{
+			_data_len--;
+			RxBuffer[4+_data_cnt++]=com_data;
+			if(_data_len==0)
+				RxState = 5;
+		}
+		else if(RxState==5)
+		{
+			RxState = 0;
+			RxBuffer[4+_data_cnt]=com_data;
+			Data_Receive_Anl2(RxBuffer,_data_cnt+5);
+		}
+		else
+			RxState = 0;
+		 
+     } 
+} 
+	
  
 
 void UsartSend_FLOW(uint8_t ch)
@@ -223,10 +306,10 @@ void Send_FLOW(void)
 	SendBuff2[SendBuff2_cnt++]=0x01;//???
 	SendBuff2[SendBuff2_cnt++]=0;//???
 	
-	_temp = (vs16)(pixel_flow_x*1000);//ultra_distance;
+	_temp = (vs16)(flow_per_out[2]*1000);//ultra_distance;
 	SendBuff2[SendBuff2_cnt++]=BYTE1(_temp);
 	SendBuff2[SendBuff2_cnt++]=BYTE0(_temp);
-	_temp = (vs16)(pixel_flow_y*1000);//ultra_distance;
+	_temp = (vs16)(flow_per_out[3]*1000);//ultra_distance;
 	SendBuff2[SendBuff2_cnt++]=BYTE1(_temp);
 	SendBuff2[SendBuff2_cnt++]=BYTE0(_temp);
 
@@ -553,7 +636,7 @@ void uart_init2(u32 bound){
 	
 	//USART_ClearFlag(USART1, USART_FLAG_TC);
 	
-#if EN_USART2_RX	
+
 	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);//开启相关中断
 
 	//Usart1 NVIC 配置
@@ -563,6 +646,6 @@ void uart_init2(u32 bound){
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据指定的参数初始化VIC寄存器、
 
-#endif
+
 	
 }

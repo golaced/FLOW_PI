@@ -27,17 +27,17 @@ float flow_gyrospeed[3];
 		flow_ang[1] = ((flow_in->integrated_y- LIMIT_FLOW(flow_in->integrated_ygyro,-fabs(flow_in->integrated_y),fabs(flow_in->integrated_y))));//for now the flow has to be scaled (to small)  
 		}  
 	  
-		yaw_comp[0] = - flow_module_offset_y * (flow_gyrospeed[2]);  
-		yaw_comp[1] = flow_module_offset_x * (flow_gyrospeed[2]);  
+		yaw_comp[0] =   flow_module_offset_x * (flow_gyrospeed[2]);  
+		yaw_comp[1] =   flow_module_offset_y * (flow_gyrospeed[2]);  
 		/* flow measurements vector */  
 
 
 		if (fabs(flow_gyrospeed[2]) < rate_threshold) {
-    flow_per_out[2]=(flow_ang[1]);
-		flow_per_out[3]=(flow_ang[0]);
+    flow_per_out[2]=(flow_ang[0]);
+		flow_per_out[3]=(flow_ang[1]);
 		} else {
-		flow_per_out[2]=(flow_ang[1]) - yaw_comp[1] ;//1
-		flow_per_out[3]=(flow_ang[0]) - yaw_comp[0] ;//0
+		flow_per_out[2]=(flow_ang[0]) - yaw_comp[0] ;//1
+		flow_per_out[3]=(flow_ang[1]) - yaw_comp[1] ;//0
 		}
 
 }

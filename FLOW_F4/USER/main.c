@@ -18,7 +18,7 @@
 #include "filter.h"
 #include "iwdg.h"
 #include "imu.h"
-#include "flash_w25.h" 
+#include "mpu6050.h" 
 
 u8 MAX_BRIGHT=250;
 u16 max_num=3;
@@ -245,6 +245,7 @@ float K_spd_flow=1;
 u8 Shape=33;
 u8 Contract=6;
 u8 Effect=0;
+u8 up_sel=0;
 void rgb565_test(void)
 { 
  
@@ -322,18 +323,19 @@ while(1)
 		}	
 		  
 		static uint32_t lasttime = 0;	
-    float x_rate = 0;//-mpu6050_fc.Gyro_deg.x; // change x and y rates
-		float y_rate = 0;//-mpu6050_fc.Gyro_deg.y;
-		float z_rate = 0;//mpu6050_fc.Gyro_deg.z; // z is correct
+    float x_rate = mpu6050_fc.Gyro_deg.y; // change x and y rates
+		float y_rate = -mpu6050_fc.Gyro_deg.x;
+		float z_rate = mpu6050_fc.Gyro_deg.z; // z is correct
     float focal_length_px = (3) / (4.0f * 6.0f) * 1000.0f; //original focal lenght: 12mm pixelsize: 6um, binning 4 enabled
     uint32_t deltatime = (micros() - lasttime);
 		flow.integration_time_us=deltatime ;
-		flow.integrated_x=pixel_flow_x  / focal_length_px * 1.0f*k_px; 
-		flow.integrated_y=pixel_flow_y  / focal_length_px * -1.0f*k_px;
+		flow.integrated_y=-pixel_flow_x  / focal_length_px * 1.0f*k_px; 
+		flow.integrated_x=-pixel_flow_y  / focal_length_px * 1.0f*k_px;
 		flow.integrated_xgyro=x_rate *flow.integration_time_us/1000000.;
 		flow.integrated_ygyro=y_rate *flow.integration_time_us/1000000.;
 		flow.integrated_zgyro=z_rate *flow.integration_time_us/1000000.;
-
+    flow_pertreatment_oldx(&flow,0);
+		
     lasttime = micros();
 
 		bmp_rx=0;
@@ -365,10 +367,20 @@ while(1)
 								#endif
 						  	}else{
 								Send_FLOW();	
+								switch(up_sel){
+									case 0:
+							  data_per_uart1(flow.integrated_x*100,flow.integrated_xgyro*100,flow_per_out[2]*100,													 
+								flow.integrated_y*100,flow.integrated_ygyro*100,flow_per_out[3]*100,				//flow.integrated_x*100,1*flow.integrated_xgyro*100,0*flow.h_x_pix*100,															
+								0,0,0,
+						    	0*10,0*10,0*10,0,0,0,0);	
+									break;
+									case 1:
 							  data_per_uart1(pixel_flow_x_sad*100,pixel_flow_x_sadt*100,pixel_flow_x_klt*100,													 
 								pixel_flow_y_sad*100,pixel_flow_y_sadt*100,pixel_flow_y_klt*100,				//flow.integrated_x*100,1*flow.integrated_xgyro*100,0*flow.h_x_pix*100,															
 								pixel_flow_x*100,pixel_flow_y*100,0*flow.h_y_pix*0,
-						    	0*10,0*10,0*10,0,0,0,0);			
+						    	0*10,0*10,0*10,0,0,0,0);	
+									break;
+								}									
 								}									
 					    USART_DMACmd(USART2,USART_DMAReq_Tx,ENABLE);  //????1?DMA??     
 							MYDMA_Enable(DMA1_Stream6,SendBuff2_cnt+2);     //????DMA??!	
@@ -388,8 +400,9 @@ int main(void)
 	delay_init(168);  //初始化延时函数
 	Initial_Timer5();
 	Cycle_Time_Init();
-	uart_init(576000);		//初始化串口波特率为115200
+	//uart_init(576000);		//初始化串口波特率为115200
 	uart_init2(115200);		//初始化串口波特率为115200
+	uart_init2(576000);		//初始化串口波特率为115200
 	LED_Init();					//初始化LED 
  	KEY_Init();					//按键初始化 
 	delay_ms(10);

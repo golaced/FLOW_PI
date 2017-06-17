@@ -2,7 +2,8 @@
 #include "usart.h"
 #include "filter.h"
 #include "stmflash.h"
-float dt_mems,dt_imu,dt_fushion,dt_uart;
+#include "ukf_task.h"
+float dt_mems,dt_imu,dt_fushion,dt_uart,dt_sonar;
 
 //设置PB9的状态 STM32-MINI开发板的LED控制管脚
 void SetPB9(u8 sta)
@@ -25,6 +26,10 @@ void SetPB9(u8 sta)
 
 
 float acc_flt[3];
+float flow_flt[3];
+float k_flow=0.35;
+float yaw_qr_off;
+float flow_h;	
 int main(void)
 {static u8 cnt[10];
 		//--------------------------- CLK INIT, HSE PLL ----------------------------
@@ -64,14 +69,17 @@ int main(void)
 	  delay_init(72);
 		TIM5_Config();
 		Cycle_Time_Init();
+		Delay_ms(100);
 		MPU6050_Init(20);
+		Delay_ms(100);
 		UART_PI_CONFIG(115200);
 		UART_FLOW_CONFIG(115200);
+		UART_FLOW_CONFIG(576000);
 		UART_UP_CONFIG(115200);
 		MYDMA_Config(DMA1_Channel2,(u32)&USART3->DR,(u32)SendBuff,TEXT_LENTH);//DMA1通道4,外设为串口1,存储器为SendBuff,长(TEXT_LENTH+2)*100.
 	  USART_DMACmd(USART3,USART_DMAReq_Tx,ENABLE);      
    	MYDMA_Enable(DMA1_Channel2,TEXT_LENTH); 
- 
+    Ultrasonic_Init();
     SetPB9(0); 
 		//READ_PARM();
 		//等待中断
@@ -92,6 +100,11 @@ int main(void)
 	    0,0,0,
 			&Roll,&Pitch,&Yaw);
 		}
+//		if(circle.check&&circle.connect)
+//		yaw_qr_off=circle.yaw-Yaw;
+//		else if(circle.connect==0)
+//		yaw_qr_off=0;
+//	  Yaw+=yaw_qr_off;
 	  //fushion
 		if(cnt[1]++>2){cnt[1]=0;		
 		dt_fushion=(float)Get_Cycle_T(2)/1000000.;		
@@ -110,10 +123,16 @@ int main(void)
 	  acc_neo_temp[0]=-acc_temp[0]*9.87;
 		acc_neo_temp[1]=-acc_temp[1]*9.87;
 		acc_neo_temp[2]=(acc_temp[2]-1.0f)*9.87;		
-		acc_flt[0]=-firstOrderFilter(acc_neo_temp[0],&firstOrderFilters[ACC_LOWPASS_X],dt_fushion);
-		acc_flt[1]=firstOrderFilter(acc_neo_temp[1],&firstOrderFilters[ACC_LOWPASS_Y],dt_fushion);
+		acc_flt[1]=-firstOrderFilter(acc_neo_temp[0],&firstOrderFilters[ACC_LOWPASS_Y],dt_fushion);
+		acc_flt[0]=firstOrderFilter(acc_neo_temp[1],&firstOrderFilters[ACC_LOWPASS_X],dt_fushion);
 		acc_flt[2]=firstOrderFilter(acc_neo_temp[2],&firstOrderFilters[ACC_LOWPASS_Z],dt_fushion);			
-			
+
+		if(ultra_distance<2300)
+			flow_h=Moving_Median(0,10,((float)ultra_distance/1000.));
+		flow_flt[0]=flow_origin[0]*k_flow*flow_h;
+		flow_flt[1]=flow_origin[1]*k_flow*flow_h;
+		
+	  ukf_pos_task_qr(0,0,Yaw,flow_flt[0],flow_flt[1],acc_flt[0],acc_flt[1],dt_fushion);
 		}
 		
 		//uart
@@ -124,15 +143,22 @@ int main(void)
 					{
 					DMA_ClearFlag(DMA1_FLAG_TC2);//清除通道4传输完成标志
 					SendBuff_cnt=0;
-
+          Send_TO_FC();
 					data_per_uart(
-					0,flow_origin[1]*1000,0,
-					0,flow_origin[0]*1000,0,
-					circle.x,circle.y,circle.z,
+					0,flow_flt[0]*1000,X_ukf[1]*1000,
+					0,flow_flt[1]*1000,X_ukf[4]*1000,
+					X_ukf_baro[0]*100, X_ukf_baro[1]*100,flow_h*100,
 					(int16_t)(Yaw*10),(int16_t)(Pitch*10.0),(int16_t)(Roll*10.0),0,0,0/10,0);
-
+         
+					
 					MYDMA_Enable(DMA1_Channel2,SendBuff_cnt);  							
 					}	
+			    Send_TO_FLOW();
+		}
+		
+		if(cnt[3]++>40){cnt[3]=0;	
+    dt_sonar=(float)Get_Cycle_T(4)/1000000.;					
+		Ultra_Duty();
 		}
 		
 		if(cnt[5]++>25){cnt[5]=0;		

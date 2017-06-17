@@ -25,4 +25,5 @@
 .\stmflash.o: ..\APP\dma.h
 .\stmflash.o: ..\Libraries\inc\stm32f10x_dma.h
 .\stmflash.o: ..\APP\usart.h
+.\stmflash.o: ..\APP\sonar.h
 .\stmflash.o: ..\Libraries\inc\stm32f10x_flash.h

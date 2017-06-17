@@ -1,6 +1,6 @@
 //pi pa9t pa10r   flow pa2t pa3r  up pb10t pb11r
 #include "include.h"
-
+#include "ukf_task.h"
 
 void UART_PI_CONFIG(u32 bound){
   //GPIO端口设置
@@ -269,8 +269,8 @@ void Data_Receive_Anl2(u8 *data_buf,u8 num)
 
   if(*(data_buf+2)==0x01)//RC_PWM
   { 
-   flow_origin[1]=-(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
-   flow_origin[0]=-(float)((int16_t)(*(data_buf+6)<<8)|*(data_buf+7))/1000.;
+   flow_origin[0]=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+   flow_origin[1]=(float)((int16_t)(*(data_buf+6)<<8)|*(data_buf+7))/1000.;
 	}
 	
 }
@@ -546,5 +546,73 @@ temp+=ctemp;
 SendBuff[SendBuff_cnt++]=(temp%256);
 SendBuff[SendBuff_cnt++]=(0xaa);
 
+}
+
+
+void Send_TO_FC(void)
+{u8 i;	u8 sum = 0;
+	u8 _cnt=SendBuff_cnt;
+	vs16 _temp;
+	SendBuff[SendBuff_cnt++]=0xAA;
+	SendBuff[SendBuff_cnt++]=0xAF;
+	SendBuff[SendBuff_cnt++]=0x66;//功能字
+	SendBuff[SendBuff_cnt++]=0;//数据量
+
+	_temp = X_ukf[0]*100;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = X_ukf[3]*100;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = X_ukf_baro[0]*1000;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+
+	_temp = X_ukf[1]*1000;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = X_ukf[4]*1000;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = X_ukf_baro[1]*1000;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	
+	SendBuff[3] = SendBuff_cnt-_cnt-4;
+
+	for( i=_cnt;i<SendBuff_cnt;i++)
+		sum += SendBuff[i];
+	SendBuff[SendBuff_cnt++] = sum;
+	
+}
+
+
+void Send_TO_FLOW(void)
+{u8 i;	u8 sum = 0;
+	u8 data_to_send[50]={0};
+	u8 _cnt=0;
+	vs16 _temp;
+	data_to_send[_cnt++]=0xAA;
+	data_to_send[_cnt++]=0xAF;
+	data_to_send[_cnt++]=0x01;//功能字
+	data_to_send[_cnt++]=0;//数据量
+
+	_temp = mpu6050_fc.Gyro_deg.x*10;
+	data_to_send[_cnt++]=BYTE1(_temp);
+	data_to_send[_cnt++]=BYTE0(_temp);
+	_temp = mpu6050_fc.Gyro_deg.y*10;
+	data_to_send[_cnt++]=BYTE1(_temp);
+	data_to_send[_cnt++]=BYTE0(_temp);
+	_temp = mpu6050_fc.Gyro_deg.z*10;
+	data_to_send[_cnt++]=BYTE1(_temp);
+	data_to_send[_cnt++]=BYTE0(_temp);
+
+	data_to_send[3] = _cnt-4;
+
+	for( i=0;i<_cnt;i++)
+		sum += data_to_send[i];
+	data_to_send[_cnt++] = sum;
+	
+	Send_Data2(data_to_send, _cnt);
 }
 

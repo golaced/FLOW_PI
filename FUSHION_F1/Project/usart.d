@@ -24,3 +24,5 @@
 .\usart.o: ..\APP\dma.h
 .\usart.o: ..\Libraries\inc\stm32f10x_dma.h
 .\usart.o: ..\APP\usart.h
+.\usart.o: ..\APP\sonar.h
+.\usart.o: ..\FUSHION\ukf_task.h

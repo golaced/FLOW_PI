@@ -6,7 +6,8 @@
 void UART_PI_CONFIG(u32 bound);
 void UART_FLOW_CONFIG(u32 bound);
 void UART_UP_CONFIG(u32 bound);
-
+void Send_TO_FLOW(void);
+void Send_TO_FC(void);
 #define TEXT_LENTH  100			//TEXT_TO_SEND字符串长度(不包含结束符)
 extern u8 SendBuff[TEXT_LENTH];
 extern u16 SendBuff_cnt;

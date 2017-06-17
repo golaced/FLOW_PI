@@ -59,4 +59,4 @@
 ..\obj\main.o: ..\HARDWARE\LED\mymath.h
 ..\obj\main.o: ..\HARDWARE\LED\filter.h
 ..\obj\main.o: ..\HARDWARE\LED\iwdg.h
-..\obj\main.o: ..\HARDWARE\LED\flash_w25.h
+..\obj\main.o: ..\HARDWARE\LED\mpu6050.h
