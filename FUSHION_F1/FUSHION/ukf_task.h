@@ -21,7 +21,7 @@
 
 extern float K_spd_flow;
 extern  double X_ukf[6],X_ukf_nav[9],X_ukf_all[9],X_ukf_baro[6];;
-extern double X_KF_NAV[2][3];
+extern double X_KF_NAV[3][3];
 extern float X_ukf_Pos[2];
 extern float velEast,velNorth, velNorth_gps,velEast_gps;;
 void ukf_flow(float flowx,float flowy,float accx,float accy,float T);

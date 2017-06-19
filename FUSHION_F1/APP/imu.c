@@ -158,7 +158,8 @@ void IMUupdate(float half_T,float gx, float gy, float gz, float ax, float ay, fl
 	ref.err_Int.z = LIMIT(ref.err_Int.z, - IMU_INTEGRAL_LIM ,IMU_INTEGRAL_LIM );
 	if(circle.check&&circle.connect)
 	yaw_mag=circle.yaw;
-
+  else
+	yaw_mag=Yaw;	
 	if( reference_v.z > 0.0f )
 	{
 		if( fly_ready  )

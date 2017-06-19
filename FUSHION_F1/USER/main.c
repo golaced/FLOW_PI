@@ -30,6 +30,13 @@ float flow_flt[3];
 float k_flow=0.35;
 float yaw_qr_off;
 float flow_h;	
+u8 debug1=0;
+u8 end_ble=1;
+float accx;//=acc_flt[1]*sin(circle.yaw_off*0.0173)+acc_flt[0]*cos(circle.yaw_off*0.0173);
+float accy;//=acc_flt[1]*cos(circle.yaw_off*0.0173)-acc_flt[0]*sin(circle.yaw_off*0.0173);
+
+float flowx;//=flow_flt[1]*sin(circle.yaw_off*0.0173)+flow_flt[0]*cos(circle.yaw_off*0.0173);
+float flowy;//=flow_flt[1]*cos(circle.yaw_off*0.0173)-flow_flt[0]*sin(circle.yaw_off*0.0173);	
 int main(void)
 {static u8 cnt[10];
 		//--------------------------- CLK INIT, HSE PLL ----------------------------
@@ -75,6 +82,9 @@ int main(void)
 		UART_PI_CONFIG(115200);
 		UART_FLOW_CONFIG(115200);
 		UART_FLOW_CONFIG(576000);
+		if(end_ble)
+		UART_UP_CONFIG(576000);	
+		else
 		UART_UP_CONFIG(115200);
 		MYDMA_Config(DMA1_Channel2,(u32)&USART3->DR,(u32)SendBuff,TEXT_LENTH);//DMA1通道4,外设为串口1,存储器为SendBuff,长(TEXT_LENTH+2)*100.
 	  USART_DMACmd(USART3,USART_DMAReq_Tx,ENABLE);      
@@ -128,11 +138,17 @@ int main(void)
 		acc_flt[2]=firstOrderFilter(acc_neo_temp[2],&firstOrderFilters[ACC_LOWPASS_Z],dt_fushion);			
 
 		if(ultra_distance<2300)
-			flow_h=Moving_Median(0,10,((float)ultra_distance/1000.));
+			flow_h=X_ukf_baro[0];//Moving_Median(0,10,((float)ultra_distance/1000.));
 		flow_flt[0]=flow_origin[0]*k_flow*flow_h;
 		flow_flt[1]=flow_origin[1]*k_flow*flow_h;
 		
-	  ukf_pos_task_qr(0,0,Yaw,flow_flt[0],flow_flt[1],acc_flt[0],acc_flt[1],dt_fushion);
+	  accx=acc_flt[1]*sin(circle.yaw_off*0.0173)+acc_flt[0]*cos(circle.yaw_off*0.0173);
+    accy=acc_flt[1]*cos(circle.yaw_off*0.0173)-acc_flt[0]*sin(circle.yaw_off*0.0173);
+	
+    flowx=flow_flt[1]*sin(circle.yaw_off*0.0173)+flow_flt[0]*cos(circle.yaw_off*0.0173);
+	  flowy=flow_flt[1]*cos(circle.yaw_off*0.0173)-flow_flt[0]*sin(circle.yaw_off*0.0173);	
+		
+	  ukf_pos_task_qr(0,0,Yaw,flowx,flowy,accx,accy,dt_fushion);
 		}
 		
 		//uart
@@ -143,16 +159,26 @@ int main(void)
 					{
 					DMA_ClearFlag(DMA1_FLAG_TC2);//清除通道4传输完成标志
 					SendBuff_cnt=0;
+					if(!debug1){	
           Send_TO_FC();
+					Send_TO_FC_OSENSOR();	}
+					//mark
+					if(cnt[4]++>9&&!debug1){cnt[4]=0;
+					Send_TO_FC_OVISON();
+					Send_TO_FC_OMARK();	
+					}	
+					Send_TO_FC_DEBUG();
+					if(debug1||end_ble)
 					data_per_uart(
-					0,flow_flt[0]*1000,X_ukf[1]*1000,
-					0,flow_flt[1]*1000,X_ukf[4]*1000,
-					X_ukf_baro[0]*100, X_ukf_baro[1]*100,flow_h*100,
-					(int16_t)(Yaw*10),(int16_t)(Pitch*10.0),(int16_t)(Roll*10.0),0,0,0/10,0);
+					0,flowx*1000,X_ukf[1]*1000,
+					0,flowy*1000,X_ukf[4]*1000,
+					X_ukf_baro[0]*100, circle.z,ultra_distance/10,
+					(int16_t)(Yaw*10),(int16_t)(Pitch*10.0),(int16_t)(Roll*10.0),0,circle.check&&circle.connect,circle.check&&circle.connect,0);
          
 					
 					MYDMA_Enable(DMA1_Channel2,SendBuff_cnt);  							
 					}	
+					//uart2
 			    Send_TO_FLOW();
 		}
 		

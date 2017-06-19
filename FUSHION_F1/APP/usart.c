@@ -131,6 +131,7 @@ void UART_UP_CONFIG(u32 bound){
 float flow_origin_pi[2];
 CIRCLE circle;
 float mark_map[10][5];//x y z yaw id
+float off_yaw=90;
 void Data_Receive_Anl1(u8 *data_buf,u8 num)
 { static u8 led;
 	vs16 rc_value_temp;
@@ -152,7 +153,7 @@ void Data_Receive_Anl1(u8 *data_buf,u8 num)
 	circle.z=(int16_t)((*(data_buf+9)<<8)|*(data_buf+10));
 	circle.pit=(int16_t)((*(data_buf+11)<<8)|*(data_buf+12));
 	circle.rol=(int16_t)((*(data_buf+13)<<8)|*(data_buf+14));
-	circle.yaw=To_180_degrees((int16_t)((*(data_buf+15)<<8)|*(data_buf+16))-90+circle.yaw_off);	
+	circle.yaw=To_180_degrees((int16_t)((*(data_buf+15)<<8)|*(data_buf+16))-off_yaw-circle.yaw_off);	
 	flow_origin_pi[0]=circle.spdx=(int16_t)((*(data_buf+17)<<8)|*(data_buf+18));
 	flow_origin_pi[1]=circle.spdy=(int16_t)((*(data_buf+19)<<8)|*(data_buf+20));
 	//map	
@@ -274,7 +275,7 @@ void Data_Receive_Anl2(u8 *data_buf,u8 num)
 	}
 	
 }
-
+//flow
 u8 RxBuffer[50];
 u8 RxState = 0;
 u8 RxBufferNum = 0;
@@ -334,13 +335,85 @@ void USART2_IRQHandler(void)                	//串口1中断服务程序
      } 
 } 
 	
+
+
+
+float flow_k=1,flow_set_off[3]={0};
+void Data_Receive_Anl3(u8 *data_buf,u8 num)
+{
+	vs16 rc_value_temp;
+	u8 sum = 0;
+	u8 i;
+	for( i=0;i<(num-1);i++)
+		sum += *(data_buf+i);
+	if(!(sum==*(data_buf+num-1)))		return;		//??sum
+	if(!(*(data_buf)==0xAA && *(data_buf+1)==0xAF))		return;		//????
+
+  if(*(data_buf+2)==0x66)//
+  { 
+   flow_k=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+   flow_set_off[0]=(float)((int16_t)(*(data_buf+6)<<8)|*(data_buf+7))/1000.;
+	 flow_set_off[1]=(float)((int16_t)(*(data_buf+8)<<8)|*(data_buf+9))/1000.;
+	 circle.yaw_off=flow_set_off[2]=(float)((int16_t)(*(data_buf+10)<<8)|*(data_buf+11))/10.;	
+	}
+	
+}
+
+u8 RxBuffer3[50];
+u8 RxState3 = 0;
+u8 RxBufferNum3 = 0;
+u8 RxBufferCnt3 = 0;
+u8 RxLen3 = 0;
+static u8 _data_len3 = 0,_data_cnt3 = 0;
 void USART3_IRQHandler(void)                	//串口1中断服务程序
 	{
-	u8 Res;
+		
+	u8 com_data;
+		if(USART3->SR & USART_SR_ORE)//ORE??
+	{
+		com_data = USART3->DR;
+	}
+	
 	if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
 		{
-		Res =USART_ReceiveData(USART3);	//读取接收到的数据
-		
+		com_data =USART_ReceiveData(USART3);	//读取接收到的数据
+		if(RxState3==0&&com_data==0xAA)
+		{
+			RxState3=1;
+			RxBuffer3[0]=com_data;
+		}
+		else if(RxState3==1&&com_data==0xAF)
+		{
+			RxState3=2;
+			RxBuffer3[1]=com_data;
+		}
+		else if(RxState3==2&&com_data>0&&com_data<0XF1)
+		{
+			RxState3=3;
+			RxBuffer3[2]=com_data;
+		}
+		else if(RxState3==3&&com_data<50)//MAX_send num==50
+		{
+			RxState3 = 4;
+			RxBuffer3[3]=com_data;
+			_data_len3 = com_data;
+			_data_cnt3 = 0;
+		}
+		else if(RxState3==4&&_data_len3>0)
+		{
+			_data_len3--;
+			RxBuffer3[4+_data_cnt3++]=com_data;
+			if(_data_len3==0)
+				RxState3 = 5;
+		}
+		else if(RxState3==5)
+		{
+			RxState3 = 0;
+			RxBuffer3[4+_data_cnt3]=com_data;
+			Data_Receive_Anl3(RxBuffer3,_data_cnt3+5);
+		}
+		else
+			RxState3 = 0;
 		 
      } 
 } 
@@ -395,13 +468,32 @@ u16 i;
 u8 SendBuff[TEXT_LENTH];
 u16 SendBuff_cnt;
 
+int debug[20];
 void data_per_uart(int16_t ax,int16_t ay, int16_t az, int16_t gx,int16_t  gy, int16_t gz,int16_t hx, int16_t hy, int16_t hz,
 	int16_t yaw,int16_t pitch,int16_t roll,int16_t alt,int16_t tempr,int16_t press,int16_t IMUpersec)
 {
 u16 i=0; 	
 unsigned int temp=0xaF+9;
 char ctemp;	
-	
+
+debug[0]=end_ble;
+debug[1]=ax;
+debug[2]=ay;
+debug[3]=az;
+debug[4]=gx;
+debug[5]=gy;
+debug[6]=gz;
+debug[7]=hx;	
+debug[8]=hy;	
+debug[9]=hz;	
+debug[10]=yaw;	
+debug[11]=pitch;	
+debug[12]=roll;	
+debug[13]=alt;	
+debug[14]=tempr;		
+debug[15]=press;	
+debug[16]=IMUpersec;			
+if(!end_ble){	
 SendBuff[SendBuff_cnt++]=0xa5;
 SendBuff[SendBuff_cnt++]=0x5a;
 SendBuff[SendBuff_cnt++]=14+8;
@@ -545,20 +637,20 @@ temp+=ctemp;
 
 SendBuff[SendBuff_cnt++]=(temp%256);
 SendBuff[SendBuff_cnt++]=(0xaa);
-
+}
 }
 
 
 void Send_TO_FC(void)
 {u8 i;	u8 sum = 0;
-	u8 _cnt=SendBuff_cnt;
+	u16 _cnt=SendBuff_cnt;
 	vs16 _temp;
 	SendBuff[SendBuff_cnt++]=0xAA;
 	SendBuff[SendBuff_cnt++]=0xAF;
 	SendBuff[SendBuff_cnt++]=0x66;//功能字
 	SendBuff[SendBuff_cnt++]=0;//数据量
 
-	_temp = X_ukf[0]*100;
+	_temp = X_ukf[0]*100;//pos
 	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
 	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
 	_temp = X_ukf[3]*100;
@@ -568,17 +660,32 @@ void Send_TO_FC(void)
 	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
 	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
 
-	_temp = X_ukf[1]*1000;
+	_temp = X_ukf[1]*1000*flow_k;//spd
 	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
 	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
-	_temp = X_ukf[4]*1000;
+	_temp = X_ukf[4]*1000*flow_k;
 	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
 	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
 	_temp = X_ukf_baro[1]*1000;
 	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
 	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
 	
-	SendBuff[3] = SendBuff_cnt-_cnt-4;
+	_temp = Pitch*100;//att
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = Roll*100;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = Yaw*100;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+
+  _temp = circle.connect;
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = circle.check;
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	
+	SendBuff[_cnt+3] = SendBuff_cnt-_cnt-4;
 
 	for( i=_cnt;i<SendBuff_cnt;i++)
 		sum += SendBuff[i];
@@ -587,10 +694,153 @@ void Send_TO_FC(void)
 }
 
 
+void Send_TO_FC_DEBUG(void)
+{u8 i;	u8 sum = 0;
+	u16 _cnt=SendBuff_cnt;
+	vs16 _temp;
+	SendBuff[SendBuff_cnt++]=0xAA;
+	SendBuff[SendBuff_cnt++]=0xAF;
+	SendBuff[SendBuff_cnt++]=0x11;//功能字
+	SendBuff[SendBuff_cnt++]=0;//数据量
+ for(i=0;i<19;i++){
+	_temp = debug[i];//pos
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+ }
+	
+	SendBuff[_cnt+3] = SendBuff_cnt-_cnt-4;
+
+	for( i=_cnt;i<SendBuff_cnt;i++)
+		sum += SendBuff[i];
+	SendBuff[SendBuff_cnt++] = sum;
+	
+}
+
+void Send_TO_FC_OSENSOR(void)
+{u8 i;	u8 sum = 0;
+	u16 _cnt=SendBuff_cnt;
+	vs16 _temp;
+	SendBuff[SendBuff_cnt++]=0xAA;
+	SendBuff[SendBuff_cnt++]=0xAF;
+	SendBuff[SendBuff_cnt++]=0x77;//功能字
+	SendBuff[SendBuff_cnt++]=0;//数据量
+
+	_temp = flow_flt[0]*1000;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = flow_flt[1]*1000;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	
+	_temp = mpu6050_fc.Acc.x;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = mpu6050_fc.Acc.y;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = mpu6050_fc.Acc.z;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = mpu6050_fc.Gyro_deg.x*10;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = mpu6050_fc.Gyro_deg.y*10;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = mpu6050_fc.Gyro_deg.z*10;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	
+	_temp = ultra_distance;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	
+	SendBuff[_cnt+3] = SendBuff_cnt-_cnt-4;
+
+	for( i=_cnt;i<SendBuff_cnt;i++)
+		sum += SendBuff[i];
+	SendBuff[SendBuff_cnt++] = sum;
+	
+}
+
+
+void Send_TO_FC_OVISON(void)
+{u8 i;	u8 sum = 0;
+	u16 _cnt=SendBuff_cnt;
+	vs16 _temp;
+	SendBuff[SendBuff_cnt++]=0xAA;
+	SendBuff[SendBuff_cnt++]=0xAF;
+	SendBuff[SendBuff_cnt++]=0x88;//功能字
+	SendBuff[SendBuff_cnt++]=0;//数据量
+
+	_temp = circle.connect;
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = circle.check;
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	
+	_temp = circle.x;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = circle.y;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = circle.z;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	
+	_temp = circle.pit;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = circle.rol;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = circle.yaw;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	SendBuff[_cnt+3] = SendBuff_cnt-_cnt-4;
+
+	for( i=_cnt;i<SendBuff_cnt;i++)
+		sum += SendBuff[i];
+	SendBuff[SendBuff_cnt++] = sum;
+	
+}
+
+
+void Send_TO_FC_OMARK(void)
+{u8 i;	u8 sum = 0;
+	u16 _cnt=SendBuff_cnt;
+	vs16 _temp;
+	SendBuff[SendBuff_cnt++]=0xAA;
+	SendBuff[SendBuff_cnt++]=0xAF;
+	SendBuff[SendBuff_cnt++]=0x99;//功能字
+	SendBuff[SendBuff_cnt++]=0;//数据量
+
+	for(i=0;i<6;i++){
+	_temp = mark_map[i][0];
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = mark_map[i][1];
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = mark_map[i][2];
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = mark_map[i][3];
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	_temp = mark_map[i][4];
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+  }
+
+	for( i=_cnt;i<SendBuff_cnt;i++)
+		sum += SendBuff[i];
+	SendBuff[SendBuff_cnt++] = sum;
+	
+}
 void Send_TO_FLOW(void)
 {u8 i;	u8 sum = 0;
 	u8 data_to_send[50]={0};
-	u8 _cnt=0;
+	u16 _cnt=0;
 	vs16 _temp;
 	data_to_send[_cnt++]=0xAA;
 	data_to_send[_cnt++]=0xAF;
@@ -607,7 +857,15 @@ void Send_TO_FLOW(void)
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
 
-	data_to_send[3] = _cnt-4;
+	
+	_temp = flow_set_off[0]*1000;
+	data_to_send[_cnt++]=BYTE1(_temp);
+	data_to_send[_cnt++]=BYTE0(_temp);
+	_temp = flow_set_off[1]*1000;
+	data_to_send[_cnt++]=BYTE1(_temp);
+	data_to_send[_cnt++]=BYTE0(_temp);
+	
+	data_to_send[_cnt+3] = _cnt-4;
 
 	for( i=0;i<_cnt;i++)
 		sum += data_to_send[i];

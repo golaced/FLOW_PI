@@ -101,8 +101,8 @@ return 1;
 
 
 u8 kf_data_sel=2;//0->flow 1->gps 2->flow global 3->openpilot
-double X_KF_NAV[2][3],X_KF1_NAV_X[3],X_KF1_NAV_Y[3],X_KF1_NAV_Z[3];
-double P_KF_NAV[2][9];
+double X_KF_NAV[3][3],X_KF1_NAV_X[3],X_KF1_NAV_Y[3],X_KF1_NAV_Z[3];
+double P_KF_NAV[3][9];
 float ga_nav= 0.1; 
 float gwa_nav=0.1;
 float g_pos_flow= 0.0086;//0.0051;
@@ -151,26 +151,32 @@ double H[9]={
 			 1,0,0,
        0,1,0,
        0,0,0}; 
-
-
+double H1[9]={
+			 1,0,0,
+       0,0,0,
+       0,0,0}; 
 
 u8 kf_data_sel_temp=kf_data_sel; 
 // kf_data_sel_temp=0;
 	 float Posz;
+	 if(ultra_distance<4000){
 	 if(circle.check&&circle.connect)		
    {
-	 Posz=(float)circle.z/100.;
-	 qr_z_off=Posz-(float)ultra_distance/1000.;
+	 qr_z_off=(float)circle.z/100.-(float)ultra_distance/1000.;
+	 Posz=(float)circle.z/100.-qr_z_off; 
 	 }else		 
-	 Posz=(float)ultra_distance/1000.+qr_z_off;
+	 Posz=(float)ultra_distance/1000.;
+   }else if(circle.check&&circle.connect)		
+	 Posz=(float)circle.z/100.-qr_z_off;
 	 float Accz=acc_flt[2];	 
-   float Zz[3]={Posz+LIMIT(X_ukf_baro[1]*T*10,-2,2),0,Accz};
+   double Zz[3]={LIMIT(Posz,0.05,10)+LIMIT(X_ukf_baro[1]*T*10,-2,2),0,Accz};
 	 u8 flag_hight[3]={1,0,1};
 	 if(fabs(X_ukf_baro[0]-Posz)>0.5&&ultra_distance<4000)
-	 {state_correct_z[0]=Posz;state_correct_z[3]=state_correct_z[4]=state_correct_z[5]=0;}
-	 OLDX_KF2(Zz,r_sensor_hight[3], r_sensor_hight, flag_hight,X_KF1_NAV_Z, state_correct_z, T);
-   X_ukf_baro[0]=X_KF1_NAV_Z[0];
-	 X_ukf_baro[1]=X_KF1_NAV_Z[1];
+	 {X_KF1_NAV_Z[0]=state_correct_z[0]=Posz;X_KF1_NAV_Z[1]=X_KF1_NAV_Z[2]=state_correct_z[1]=state_correct_z[2]=state_correct_z[3]=state_correct_z[4]=state_correct_z[5]=0;}
+	 //OLDX_KF2(Zz,r_sensor_hight[3], r_sensor_hight, flag_hight,X_KF1_NAV_Z, state_correct_z, T);
+   KF_OLDX_NAV( X_KF_NAV[2],  P_KF_NAV[2],  Zz,Accz, A,  B,  H1,  ga_nav,  gwa_nav, 0.05,  g_spd_flow,  T);
+   X_ukf_baro[0]=X_KF_NAV[2][0];
+	 X_ukf_baro[1]=X_KF_NAV[2][1];
 if(kf_data_sel_temp==1){
  static int qr_yaw_init;	
 	 float Yaw_qr=To_180_degrees(Yaw);
