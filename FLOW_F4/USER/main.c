@@ -245,7 +245,7 @@ float K_spd_flow=1;
 u8 Shape=33;
 u8 Contract=6;
 u8 Effect=0;
-u8 up_sel=0;
+u8 up_sel=1;
 void rgb565_test(void)
 { 
  
@@ -280,7 +280,8 @@ void rgb565_test(void)
 	TIM3_Int_Init(10000-1,8400-1);//10Khz计数,1秒钟中断一次
 	MYDMA_Config(DMA1_Stream6,DMA_Channel_4,(u32)&USART2->DR,(u32)SendBuff2,SEND_BUF_SIZE2+2,1);//DMA2,STEAM7,CH4,?????1,????SendBuff,???:SEND_BUF_SIZE.
 	USART_DMACmd(USART2,USART_DMAReq_Tx,ENABLE);       
-	//en_guass=0;  
+	//OV5640_Focus_Single	();
+	///en_guass=0;  
 	//en_hist_filter=1; 
 while(1)
 	{ static float t_mpu,t_focus;
@@ -288,7 +289,7 @@ while(1)
     t_mpu+=dt;
     t_focus+=dt;
 		
-    if(t_focus>45&&1){t_focus=0;
+    if(t_focus>6&&1){t_focus=0;
 		OV5640_Focus_Single	();
 		}		
 		if(t_mpu>0.015){
@@ -375,8 +376,8 @@ while(1)
 						    	0*10,0*10,0*10,0,0,0,0);	
 									break;
 									case 1:
-							  data_per_uart1(pixel_flow_x_sad*100,pixel_flow_x_sadt*100,pixel_flow_x_klt*100,													 
-								pixel_flow_y_sad*100,pixel_flow_y_sadt*100,pixel_flow_y_klt*100,				//flow.integrated_x*100,1*flow.integrated_xgyro*100,0*flow.h_x_pix*100,															
+							  data_per_uart1(0*100,pixel_flow_x_klt*100,pixel_flow_x_sad*100,													 
+								0*100,pixel_flow_y_klt*100,pixel_flow_y_sad*100,				//flow.integrated_x*100,1*flow.integrated_xgyro*100,0*flow.h_x_pix*100,															
 								pixel_flow_x*100,pixel_flow_y*100,0*flow.h_y_pix*0,
 						    	0*10,0*10,0*10,0,0,0,0);	
 									break;

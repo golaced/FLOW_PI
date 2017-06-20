@@ -62,6 +62,10 @@ typedef struct _flow_klt_image {
 } flow_klt_image;
 
 uint8_t check_for_frame(uint8_t *image1,uint8_t *image2,float x_rate,float y_rate,float z_rate,float *px,float *py) ;
+
+int opticFlowLK(unsigned char * new_image_buf, unsigned char * old_image_buf, int* p_x, int* p_y, int n_found_points, int imW, int imH, int* new_x, int* new_y, int* status, int half_window_size1, int max_iterations);
+
+	
 #endif
 
 

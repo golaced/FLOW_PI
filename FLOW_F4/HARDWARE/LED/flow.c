@@ -3,13 +3,13 @@
 #include "stdlib.h"
 #define KLT2 0
 #define SAD2 0
-#define USE_SAD 1
+#define USE_SAD 0
 
 #define FRAME_SIZE	64
 
 
 #define SEARCH_SIZE 8//	4*2 ;// maximum offset to search: 4 + 1/2 pixels
-#define NUM_BLOCKS	6//5*2 ;// x & y number of tiles to check
+#define NUM_BLOCKS	8//5*2 ;// x & y number of tiles to check
 #define TILE_SIZE	SEARCH_SIZE*2//8*2;  
 u16 PARAM_BOTTOM_FLOW_FEATURE_THRESHOLD=10;//14;//100;
 u16 PARAM_BOTTOM_FLOW_VALUE_THRESHOLD=3500;//5000;
@@ -26,14 +26,14 @@ u8 meancount_set=5;
 u8 en_hist_filter=1;
 u8 en_gro_filter=0;
 
-#define  NUM_BLOCKS_KLT	8//3 8 x & y number of tiles to check  6
+#define  NUM_BLOCKS_KLT	6//3 8 x & y number of tiles to check  6
 //this are the settings for KLT based flow
 #define PYR_LVLS 1
 #define HALF_PATCH_SIZE 4       //this is half the wanted patch size minus 1  6
 #define PATCH_SIZE (HALF_PATCH_SIZE*2+1)
 u8 meancount_set_klt=1;
 u8 max_iter=5;
-
+float k_klt=2.5;
 #if USE_30FPS
 u8 gray_scal=8;
 #else
@@ -944,8 +944,7 @@ meancount_view=0.2*meancount+0.8*meancount_view;
         tempySum+=tempy[i];
     }
     
-   // *pixel_flow_x = (*pixel_flow_x*1+tempxSum)/tempCount*scale_x;
-   // *pixel_flow_y = (*pixel_flow_y*1+tempySum)/tempCount*scale_y;
+   // *pixel_flow_x = (*pixel_flow_x*1+tempxSum)/tempCount*scale_x;*pixel_flow_y = (*pixel_flow_y*1+tempySum)/tempCount*scale_y;
 	/* calc quality */
 	 qual = (uint8_t)(meancount * 255 / (NUM_BLOCKS*NUM_BLOCKS));
 
@@ -996,7 +995,63 @@ uint8_t compute_klt(uint8_t *image1, uint8_t *image2, float x_rate, float y_rate
   float meanflowx = 0.0f;
   float meanflowy = 0.0f;
   uint16_t meancount = 0;
-
+////Start change
+//    int tempCount=4;
+//    float tempx[4];
+//    float tempy[4];
+//    for(int i=0;i<tempCount;++i)
+//    {
+//        tempx[i]=0.0f;
+//        tempy[i]=0.0f;
+//    }
+//    //End change
+//    
+//    //Start change
+//    uint16_t imageSizeCount=64*64;
+//    float imageChangeFactor=0.0f;
+//    uint32_t image1Sum=0;
+//    uint32_t image2Sum=0;
+//    for(int i=0;i<imageSizeCount;++i)
+//    {
+//        image1Sum+=*(image1+i);
+//        image2Sum+=*(image2+i);
+//    }
+//    if (image1Sum>=image2Sum)
+//    {
+//        imageChangeFactor=image1Sum/image2Sum;
+//        for(int j=0;j<imageSizeCount;++j)
+//        {
+//            if(*(image2+j)*imageChangeFactor<=256)
+//                *(image2+j)*=imageChangeFactor;
+//            else
+//                *(image2+j)=255;
+//        }
+//    }
+//    else
+//    {
+//        imageChangeFactor=image2Sum/image1Sum;
+//        for(int j=0;j<imageSizeCount;++j)
+//        {
+//            if(*(image1+j)*imageChangeFactor<=256)
+//                *(image1+j)*=imageChangeFactor;
+//            else
+//                *(image1+j)=255;
+//        }
+//    }
+//    //When image i < avg(image) =0
+//    for(int i=0;i<imageSizeCount;++i)
+//    {
+//        image1Sum+=*(image1+i);
+//        image2Sum+=*(image2+i);
+//    }
+//    for(int i=0;i<imageSizeCount;++i)
+//    {
+//        if(*(image1+i)<image1Sum/imageSizeCount/4)
+//            *(image1+i)=0;
+//        if(*(image2+i)<image2Sum/imageSizeCount/4)
+//            *(image2+i)=0;
+//    }
+//    //End change
   /*
    * compute image pyramid for current frame
    * there is 188*120 bytes per buffer, we are only using 64*64 per buffer,
@@ -1011,6 +1066,7 @@ uint8_t compute_klt(uint8_t *image1, uint8_t *image2, float x_rate, float y_rate
     lvl_off[l] = off;//lvl_off[0] = 0,s = 64;lvl_off[1] = 64*64,s=32
     off += s*s;
     s /= 2;
+		//lvl_off[0] = 0;s = 64;lvl_off[1] = 64*64;s=32;
   }
   
   //then subsample the images consecutively, no blurring is done before the subsampling (if someone volunteers, please go ahead...)
@@ -1705,12 +1761,17 @@ u8 flow_task(uint8_t * current_image,uint8_t * previous_image ,uint8_t * current
 
 #else
 	#if !KLT2
+	int status;
+	int px,py,nx,ny;
+	//opticFlowLK(previous_image, current_image, &px,&py, 50,0,0,&nx,&ny,  &status, 8, 5);
+
 	qual[1] = compute_klt(previous_image, current_image, 0, 0,0, &tempx1, &tempy1 );
 	#else
 	qual[1] =check_for_frame(previous_image, current_image, 0, 0,0, &tempx1, &tempy1 );
 	#endif
-	pixel_flow_x_klt=1.45*1*firstOrderFilter(	-tempx1 ,&firstOrderFilters[ACC_LOWPASS_X],get_time_between_images);
-	pixel_flow_y_klt=1.45*1*firstOrderFilter(	-tempy1 ,&firstOrderFilters[ACC_LOWPASS_Y],get_time_between_images);
+	pixel_flow_x=pixel_flow_x_klt=k_klt*1*firstOrderFilter(	tempx1 ,&firstOrderFilters[ACC_LOWPASS_X],get_time_between_images);
+	pixel_flow_y=pixel_flow_y_klt=k_klt*1*firstOrderFilter(	tempy1 ,&firstOrderFilters[ACC_LOWPASS_Y],get_time_between_images);
+	
 #endif	
 	
 //	pixel_flow_x=(float)qual[0]/255*k_sad*pixel_flow_x_sad+(1-k_sad*(float)qual[0]/255)*pixel_flow_x_klt;

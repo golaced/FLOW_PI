@@ -215,11 +215,9 @@ Section Cross References
     flow.o(i.compute_flow) refers to dfixu.o(x$fpl$dfixu) for __aeabi_d2uiz
     flow.o(i.compute_klt) refers to floorf.o(i.__hardfp_floorf) for __hardfp_floorf
     flow.o(i.compute_klt) refers to flow.o(.bss) for Jx
-    flow.o(i.flow_task) refers to flow.o(i.compute_flow) for compute_flow
+    flow.o(i.flow_task) refers to flow.o(i.compute_klt) for compute_klt
     flow.o(i.flow_task) refers to filter.o(i.firstOrderFilter) for firstOrderFilter
     flow.o(i.flow_task) refers to f2d.o(x$fpl$f2d) for __aeabi_f2d
-    flow.o(i.flow_task) refers to dmul.o(x$fpl$dmul) for __aeabi_dmul
-    flow.o(i.flow_task) refers to daddsub_clz.o(x$fpl$dadd) for __aeabi_dadd
     flow.o(i.flow_task) refers to flow.o(.data) for qual
     flow.o(i.flow_task) refers to filter.o(.bss) for firstOrderFilters
     flow.o(i.read_xy_rgb) refers to flow.o(.data) for off_pix
@@ -737,8 +735,10 @@ Removing Unused input sections from the image.
     Removing flow.o(.rev16_text), (4 bytes).
     Removing flow.o(.revsh_text), (4 bytes).
     Removing flow.o(i.RGB_GRAY), (62 bytes).
-    Removing flow.o(i.compute_klt), (1720 bytes).
-    Removing flow.o(.bss), (660 bytes).
+    Removing flow.o(i.compute_diff), (428 bytes).
+    Removing flow.o(i.compute_flow), (2540 bytes).
+    Removing flow.o(i.compute_sad_8x8), (548 bytes).
+    Removing flow.o(i.compute_subpixel), (852 bytes).
     Removing delay.o(.rev16_text), (4 bytes).
     Removing delay.o(.revsh_text), (4 bytes).
     Removing delay.o(i.GetSysTime_us), (52 bytes).
@@ -1084,7 +1084,7 @@ Removing Unused input sections from the image.
     Removing malloc.o(.constdata), (36 bytes).
     Removing malloc.o(.data), (36 bytes).
 
-387 unused section(s) (total 25566 bytes) removed from the image.
+389 unused section(s) (total 27554 bytes) removed from the image.
 
 ==============================================================================
 
@@ -1094,55 +1094,55 @@ Image Symbol Table
 
     Symbol Name                              Value     Ov Type        Size  Object(Section)
 
-    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit1.o ABSOLUTE
-    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardshut.o ABSOLUTE
     ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit3.o ABSOLUTE
     ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit2.o ABSOLUTE
+    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit1.o ABSOLUTE
+    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardshut.o ABSOLUTE
     ../clib/angel/dczerorl2.s                0x00000000   Number         0  __dczerorl2.o ABSOLUTE
     ../clib/angel/handlers.s                 0x00000000   Number         0  __scatter_zi.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry4.o ABSOLUTE
     ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry2.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit2.o ABSOLUTE
     ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit.o ABSOLUTE
     ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit2.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry4.o ABSOLUTE
     ../clib/angel/rt.s                       0x00000000   Number         0  rt_raise.o ABSOLUTE
     ../clib/angel/scatter.s                  0x00000000   Number         0  __scatter.o ABSOLUTE
     ../clib/angel/startup.s                  0x00000000   Number         0  __main.o ABSOLUTE
-    ../clib/angel/sys.s                      0x00000000   Number         0  indicate_semi.o ABSOLUTE
+    ../clib/angel/sys.s                      0x00000000   Number         0  sys_stackheap_outer.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  libspace.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  use_no_semi_2.o ABSOLUTE
-    ../clib/angel/sys.s                      0x00000000   Number         0  sys_stackheap_outer.o ABSOLUTE
+    ../clib/angel/sys.s                      0x00000000   Number         0  indicate_semi.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  use_no_semi.o ABSOLUTE
     ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_command.o ABSOLUTE
     ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_wrch.o ABSOLUTE
-    ../clib/armsys.c                         0x00000000   Number         0  argv_veneer.o ABSOLUTE
-    ../clib/armsys.c                         0x00000000   Number         0  argv_veneer.o ABSOLUTE
     ../clib/armsys.c                         0x00000000   Number         0  no_argv.o ABSOLUTE
+    ../clib/armsys.c                         0x00000000   Number         0  argv_veneer.o ABSOLUTE
+    ../clib/armsys.c                         0x00000000   Number         0  argv_veneer.o ABSOLUTE
     ../clib/armsys.c                         0x00000000   Number         0  _get_argv_nomalloc.o ABSOLUTE
     ../clib/heapalloc.c                      0x00000000   Number         0  hrguard.o ABSOLUTE
     ../clib/heapaux.c                        0x00000000   Number         0  heapauxi.o ABSOLUTE
-    ../clib/libinit.s                        0x00000000   Number         0  libinit.o ABSOLUTE
+    ../clib/libinit.s                        0x00000000   Number         0  libshutdown.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libshutdown2.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libinit2.o ABSOLUTE
-    ../clib/libinit.s                        0x00000000   Number         0  libshutdown.o ABSOLUTE
+    ../clib/libinit.s                        0x00000000   Number         0  libinit.o ABSOLUTE
     ../clib/memcpset.s                       0x00000000   Number         0  rt_memcpy_v6.o ABSOLUTE
-    ../clib/memcpset.s                       0x00000000   Number         0  rt_memclr_w.o ABSOLUTE
-    ../clib/memcpset.s                       0x00000000   Number         0  rt_memclr.o ABSOLUTE
     ../clib/memcpset.s                       0x00000000   Number         0  rt_memcpy_w.o ABSOLUTE
+    ../clib/memcpset.s                       0x00000000   Number         0  rt_memclr.o ABSOLUTE
+    ../clib/memcpset.s                       0x00000000   Number         0  rt_memclr_w.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_cppl_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_pvfn_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_stak_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_formal.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_outer.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_rtred_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_abrt_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_general.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_formal.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_outer.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  __raise.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_exit.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_segv_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_exit.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_other.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_segv_inner.o ABSOLUTE
     ../clib/signal.s                         0x00000000   Number         0  defsig.o ABSOLUTE
     ../clib/stdlib.c                         0x00000000   Number         0  exit.o ABSOLUTE
     ../fplib/basic.s                         0x00000000   Number         0  basic.o ABSOLUTE
@@ -1397,120 +1397,111 @@ Image Symbol Table
     i.USART_ReceiveData                      0x08002454   Section        0  stm32f4xx_usart.o(i.USART_ReceiveData)
     i.UsageFault_Handler                     0x0800245e   Section        0  stm32f4xx_it.o(i.UsageFault_Handler)
     i.__hardfp_fabs                          0x08002462   Section        0  fabs.o(i.__hardfp_fabs)
-    i._sys_exit                              0x08002476   Section        0  usart.o(i._sys_exit)
-    i.bit_num                                0x0800247c   Section        0  jchuff.o(i.bit_num)
-    i.compute_diff                           0x080024a2   Section        0  flow.o(i.compute_diff)
-    compute_diff                             0x080024a3   Thumb Code   428  flow.o(i.compute_diff)
-    i.compute_flow                           0x08002650   Section        0  flow.o(i.compute_flow)
-    i.compute_sad_8x8                        0x08003038   Section        0  flow.o(i.compute_sad_8x8)
-    compute_sad_8x8                          0x08003039   Thumb Code   548  flow.o(i.compute_sad_8x8)
-    i.compute_subpixel                       0x0800325c   Section        0  flow.o(i.compute_subpixel)
-    compute_subpixel                         0x0800325d   Thumb Code   852  flow.o(i.compute_subpixel)
-    i.data_per_uart1                         0x080035b0   Section        0  usart.o(i.data_per_uart1)
-    i.delay_init                             0x08003d54   Section        0  delay.o(i.delay_init)
-    i.delay_ms                               0x08003d90   Section        0  delay.o(i.delay_ms)
-    i.delay_us                               0x08003dc8   Section        0  delay.o(i.delay_us)
-    i.delay_xms                              0x08003e14   Section        0  delay.o(i.delay_xms)
-    i.dsp_fdct_8x8                           0x08003e60   Section        0  dct.o(i.dsp_fdct_8x8)
-    i.firstOrderFilter                       0x080044c8   Section        0  filter.o(i.firstOrderFilter)
-    i.flow_pertreatment_oldx                 0x08004528   Section        0  flow_s.o(i.flow_pertreatment_oldx)
-    i.flow_task                              0x080048e8   Section        0  flow.o(i.flow_task)
-    i.gaussianFilter                         0x08004a84   Section        0  main.o(i.gaussianFilter)
-    i.initFirstOrderFilter                   0x08004b18   Section        0  filter.o(i.initFirstOrderFilter)
-    i.jhuff_encode_one_block                 0x08004d84   Section        0  jchuff.o(i.jhuff_encode_one_block)
-    i.jhuff_flush_buffer                     0x08004e4c   Section        0  jchuff.o(i.jhuff_flush_buffer)
-    i.jhuff_write_bits                       0x08004ecc   Section        0  jchuff.o(i.jhuff_write_bits)
-    i.jint_add_huff_table                    0x08004f50   Section        0  jcint.o(i.jint_add_huff_table)
-    i.jint_add_quant_table                   0x08004ff4   Section        0  jcint.o(i.jint_add_quant_table)
-    i.jint_calc_huff_tbl                     0x08005074   Section        0  jcint.o(i.jint_calc_huff_tbl)
-    i.jint_process_mcu                       0x08005128   Section        0  jcint.o(i.jint_process_mcu)
-    i.jint_process_rows                      0x08005294   Section        0  jcint.o(i.jint_process_rows)
-    i.jint_std_huff_tables                   0x080053d4   Section        0  jcint.o(i.jint_std_huff_tables)
-    i.jint_std_quant_tables                  0x0800543c   Section        0  jcint.o(i.jint_std_quant_tables)
-    i.jmkr_write_end                         0x08005484   Section        0  jcmarker.o(i.jmkr_write_end)
-    i.jmkr_write_frame_head                  0x08005490   Section        0  jcmarker.o(i.jmkr_write_frame_head)
-    i.jmkr_write_huff_table                  0x0800556c   Section        0  jcmarker.o(i.jmkr_write_huff_table)
-    i.jmkr_write_image_end                   0x080056ae   Section        0  jcmarker.o(i.jmkr_write_image_end)
-    i.jmkr_write_image_start                 0x080056c4   Section        0  jcmarker.o(i.jmkr_write_image_start)
-    i.jmkr_write_jfif                        0x080056dc   Section        0  jcmarker.o(i.jmkr_write_jfif)
-    i.jmkr_write_quant_table                 0x080056fc   Section        0  jcmarker.o(i.jmkr_write_quant_table)
-    i.jmkr_write_scan_head                   0x08005764   Section        0  jcmarker.o(i.jmkr_write_scan_head)
-    i.jmkr_write_start                       0x0800580e   Section        0  jcmarker.o(i.jmkr_write_start)
-    i.jpeg_calc_value                        0x08005838   Section        0  jcapi.o(i.jpeg_calc_value)
-    i.jpeg_create_compress                   0x08005950   Section        0  jcapi.o(i.jpeg_create_compress)
-    i.jpeg_data_process                      0x0800596c   Section        0  main.o(i.jpeg_data_process)
-    i.jpeg_finish_compress                   0x08005af0   Section        0  jcapi.o(i.jpeg_finish_compress)
-    i.jpeg_set_default                       0x08005b72   Section        0  jcapi.o(i.jpeg_set_default)
-    i.jpeg_start_compress                    0x08005be8   Section        0  jcapi.o(i.jpeg_start_compress)
-    i.jpeg_write_scanline                    0x08005c28   Section        0  jcapi.o(i.jpeg_write_scanline)
-    i.jutl_cc_rgb2ycc                        0x08005cdc   Section        0  jutility.o(i.jutl_cc_rgb2ycc)
-    i.jutl_write_byte                        0x08005dc4   Section        0  jutility.o(i.jutl_write_byte)
-    i.jutl_zigzag_sort                       0x08005de8   Section        0  jutility.o(i.jutl_zigzag_sort)
-    i.main                                   0x08005e18   Section        0  main.o(i.main)
-    i.micros                                 0x08005e80   Section        0  delay.o(i.micros)
-    i.read_xy_rgb                            0x08005e8c   Section        0  flow.o(i.read_xy_rgb)
-    i.rgb565_test                            0x08005f14   Section        0  main.o(i.rgb565_test)
-    i.uart_init2                             0x08006664   Section        0  usart.o(i.uart_init2)
-    x$fpl$basic                              0x08006710   Section       24  basic.o(x$fpl$basic)
-    $v0                                      0x08006710   Number         0  basic.o(x$fpl$basic)
-    x$fpl$d2f                                0x08006728   Section       98  d2f.o(x$fpl$d2f)
-    $v0                                      0x08006728   Number         0  d2f.o(x$fpl$d2f)
-    x$fpl$dadd                               0x0800678c   Section      336  daddsub_clz.o(x$fpl$dadd)
-    $v0                                      0x0800678c   Number         0  daddsub_clz.o(x$fpl$dadd)
-    _dadd1                                   0x0800679d   Thumb Code     0  daddsub_clz.o(x$fpl$dadd)
-    x$fpl$dcmpinf                            0x080068dc   Section       24  dcmpi.o(x$fpl$dcmpinf)
-    $v0                                      0x080068dc   Number         0  dcmpi.o(x$fpl$dcmpinf)
-    x$fpl$ddiv                               0x080068f4   Section      688  ddiv.o(x$fpl$ddiv)
-    $v0                                      0x080068f4   Number         0  ddiv.o(x$fpl$ddiv)
-    ddiv_entry                               0x080068fb   Thumb Code     0  ddiv.o(x$fpl$ddiv)
-    x$fpl$dfix                               0x08006ba4   Section       94  dfix.o(x$fpl$dfix)
-    $v0                                      0x08006ba4   Number         0  dfix.o(x$fpl$dfix)
-    x$fpl$dfixu                              0x08006c04   Section       90  dfixu.o(x$fpl$dfixu)
-    $v0                                      0x08006c04   Number         0  dfixu.o(x$fpl$dfixu)
-    x$fpl$dfltu                              0x08006c5e   Section       38  dflt_clz.o(x$fpl$dfltu)
-    $v0                                      0x08006c5e   Number         0  dflt_clz.o(x$fpl$dfltu)
-    x$fpl$dleqf                              0x08006c84   Section      120  dleqf.o(x$fpl$dleqf)
-    $v0                                      0x08006c84   Number         0  dleqf.o(x$fpl$dleqf)
-    x$fpl$dmul                               0x08006cfc   Section      340  dmul.o(x$fpl$dmul)
-    $v0                                      0x08006cfc   Number         0  dmul.o(x$fpl$dmul)
-    x$fpl$dnaninf                            0x08006e50   Section      156  dnaninf.o(x$fpl$dnaninf)
-    $v0                                      0x08006e50   Number         0  dnaninf.o(x$fpl$dnaninf)
-    x$fpl$dretinf                            0x08006eec   Section       12  dretinf.o(x$fpl$dretinf)
-    $v0                                      0x08006eec   Number         0  dretinf.o(x$fpl$dretinf)
-    x$fpl$drleqf                             0x08006ef8   Section      108  drleqf.o(x$fpl$drleqf)
-    $v0                                      0x08006ef8   Number         0  drleqf.o(x$fpl$drleqf)
-    x$fpl$dsub                               0x08006f64   Section      468  daddsub_clz.o(x$fpl$dsub)
-    $v0                                      0x08006f64   Number         0  daddsub_clz.o(x$fpl$dsub)
-    _dsub1                                   0x08006f75   Thumb Code     0  daddsub_clz.o(x$fpl$dsub)
-    x$fpl$f2d                                0x08007138   Section       86  f2d.o(x$fpl$f2d)
-    $v0                                      0x08007138   Number         0  f2d.o(x$fpl$f2d)
-    x$fpl$fnaninf                            0x0800718e   Section      140  fnaninf.o(x$fpl$fnaninf)
-    $v0                                      0x0800718e   Number         0  fnaninf.o(x$fpl$fnaninf)
-    x$fpl$fpinit                             0x0800721a   Section       10  fpinit.o(x$fpl$fpinit)
-    $v0                                      0x0800721a   Number         0  fpinit.o(x$fpl$fpinit)
-    x$fpl$fretinf                            0x08007224   Section       10  fretinf.o(x$fpl$fretinf)
-    $v0                                      0x08007224   Number         0  fretinf.o(x$fpl$fretinf)
-    x$fpl$usenofp                            0x0800722e   Section        0  usenofp.o(x$fpl$usenofp)
-    .constdata                               0x08007230   Section       36  main.o(.constdata)
-    .constdata                               0x08007254   Section     6609  ov5640.o(.constdata)
-    OV5640_EXPOSURE_TBL                      0x08008b99   Data          42  ov5640.o(.constdata)
-    OV5640_LIGHTMODE_TBL                     0x08008bc3   Data          35  ov5640.o(.constdata)
-    OV5640_SATURATION_TBL                    0x08008be6   Data          42  ov5640.o(.constdata)
-    OV5640_EFFECTS_TBL                       0x08008c10   Data          21  ov5640.o(.constdata)
-    .constdata                               0x08008c28   Section      672  jcint.o(.constdata)
-    bits_dc_luminance                        0x08008d28   Data          17  jcint.o(.constdata)
-    val_dc_luminance                         0x08008d39   Data          12  jcint.o(.constdata)
-    bits_dc_chrominance                      0x08008d45   Data          17  jcint.o(.constdata)
-    val_dc_chrominance                       0x08008d56   Data          12  jcint.o(.constdata)
-    bits_ac_luminance                        0x08008d62   Data          17  jcint.o(.constdata)
-    val_ac_luminance                         0x08008d73   Data         162  jcint.o(.constdata)
-    bits_ac_chrominance                      0x08008e15   Data          17  jcint.o(.constdata)
-    val_ac_chrominance                       0x08008e26   Data         162  jcint.o(.constdata)
-    .constdata                               0x08008ec8   Section       24  jcmarker.o(.constdata)
-    jfcode                                   0x08008ec8   Data          18  jcmarker.o(.constdata)
-    code                                     0x08008eda   Data           6  jcmarker.o(.constdata)
-    .constdata                               0x08008ee0   Section       64  jutility.o(.constdata)
-    zz_order                                 0x08008ee0   Data          64  jutility.o(.constdata)
+    i.__hardfp_floorf                        0x08002478   Section        0  floorf.o(i.__hardfp_floorf)
+    i._sys_exit                              0x080024e8   Section        0  usart.o(i._sys_exit)
+    i.bit_num                                0x080024ee   Section        0  jchuff.o(i.bit_num)
+    i.compute_klt                            0x08002514   Section        0  flow.o(i.compute_klt)
+    i.data_per_uart1                         0x08002bf4   Section        0  usart.o(i.data_per_uart1)
+    i.delay_init                             0x08003398   Section        0  delay.o(i.delay_init)
+    i.delay_ms                               0x080033d4   Section        0  delay.o(i.delay_ms)
+    i.delay_us                               0x0800340c   Section        0  delay.o(i.delay_us)
+    i.delay_xms                              0x08003458   Section        0  delay.o(i.delay_xms)
+    i.dsp_fdct_8x8                           0x080034a4   Section        0  dct.o(i.dsp_fdct_8x8)
+    i.firstOrderFilter                       0x08003b0c   Section        0  filter.o(i.firstOrderFilter)
+    i.flow_pertreatment_oldx                 0x08003b6c   Section        0  flow_s.o(i.flow_pertreatment_oldx)
+    i.flow_task                              0x08003f2c   Section        0  flow.o(i.flow_task)
+    i.gaussianFilter                         0x08004008   Section        0  main.o(i.gaussianFilter)
+    i.initFirstOrderFilter                   0x0800409c   Section        0  filter.o(i.initFirstOrderFilter)
+    i.jhuff_encode_one_block                 0x08004308   Section        0  jchuff.o(i.jhuff_encode_one_block)
+    i.jhuff_flush_buffer                     0x080043d0   Section        0  jchuff.o(i.jhuff_flush_buffer)
+    i.jhuff_write_bits                       0x08004450   Section        0  jchuff.o(i.jhuff_write_bits)
+    i.jint_add_huff_table                    0x080044d4   Section        0  jcint.o(i.jint_add_huff_table)
+    i.jint_add_quant_table                   0x08004578   Section        0  jcint.o(i.jint_add_quant_table)
+    i.jint_calc_huff_tbl                     0x080045f8   Section        0  jcint.o(i.jint_calc_huff_tbl)
+    i.jint_process_mcu                       0x080046ac   Section        0  jcint.o(i.jint_process_mcu)
+    i.jint_process_rows                      0x08004818   Section        0  jcint.o(i.jint_process_rows)
+    i.jint_std_huff_tables                   0x08004958   Section        0  jcint.o(i.jint_std_huff_tables)
+    i.jint_std_quant_tables                  0x080049c0   Section        0  jcint.o(i.jint_std_quant_tables)
+    i.jmkr_write_end                         0x08004a08   Section        0  jcmarker.o(i.jmkr_write_end)
+    i.jmkr_write_frame_head                  0x08004a14   Section        0  jcmarker.o(i.jmkr_write_frame_head)
+    i.jmkr_write_huff_table                  0x08004af0   Section        0  jcmarker.o(i.jmkr_write_huff_table)
+    i.jmkr_write_image_end                   0x08004c32   Section        0  jcmarker.o(i.jmkr_write_image_end)
+    i.jmkr_write_image_start                 0x08004c48   Section        0  jcmarker.o(i.jmkr_write_image_start)
+    i.jmkr_write_jfif                        0x08004c60   Section        0  jcmarker.o(i.jmkr_write_jfif)
+    i.jmkr_write_quant_table                 0x08004c80   Section        0  jcmarker.o(i.jmkr_write_quant_table)
+    i.jmkr_write_scan_head                   0x08004ce8   Section        0  jcmarker.o(i.jmkr_write_scan_head)
+    i.jmkr_write_start                       0x08004d92   Section        0  jcmarker.o(i.jmkr_write_start)
+    i.jpeg_calc_value                        0x08004dbc   Section        0  jcapi.o(i.jpeg_calc_value)
+    i.jpeg_create_compress                   0x08004ed4   Section        0  jcapi.o(i.jpeg_create_compress)
+    i.jpeg_data_process                      0x08004ef0   Section        0  main.o(i.jpeg_data_process)
+    i.jpeg_finish_compress                   0x08005074   Section        0  jcapi.o(i.jpeg_finish_compress)
+    i.jpeg_set_default                       0x080050f6   Section        0  jcapi.o(i.jpeg_set_default)
+    i.jpeg_start_compress                    0x0800516c   Section        0  jcapi.o(i.jpeg_start_compress)
+    i.jpeg_write_scanline                    0x080051ac   Section        0  jcapi.o(i.jpeg_write_scanline)
+    i.jutl_cc_rgb2ycc                        0x08005260   Section        0  jutility.o(i.jutl_cc_rgb2ycc)
+    i.jutl_write_byte                        0x08005348   Section        0  jutility.o(i.jutl_write_byte)
+    i.jutl_zigzag_sort                       0x0800536c   Section        0  jutility.o(i.jutl_zigzag_sort)
+    i.main                                   0x0800539c   Section        0  main.o(i.main)
+    i.micros                                 0x08005404   Section        0  delay.o(i.micros)
+    i.read_xy_rgb                            0x08005410   Section        0  flow.o(i.read_xy_rgb)
+    i.rgb565_test                            0x08005498   Section        0  main.o(i.rgb565_test)
+    i.uart_init2                             0x08005b9c   Section        0  usart.o(i.uart_init2)
+    x$fpl$basic                              0x08005c48   Section       24  basic.o(x$fpl$basic)
+    $v0                                      0x08005c48   Number         0  basic.o(x$fpl$basic)
+    x$fpl$d2f                                0x08005c60   Section       98  d2f.o(x$fpl$d2f)
+    $v0                                      0x08005c60   Number         0  d2f.o(x$fpl$d2f)
+    x$fpl$dadd                               0x08005cc4   Section      336  daddsub_clz.o(x$fpl$dadd)
+    $v0                                      0x08005cc4   Number         0  daddsub_clz.o(x$fpl$dadd)
+    _dadd1                                   0x08005cd5   Thumb Code     0  daddsub_clz.o(x$fpl$dadd)
+    x$fpl$dcmpinf                            0x08005e14   Section       24  dcmpi.o(x$fpl$dcmpinf)
+    $v0                                      0x08005e14   Number         0  dcmpi.o(x$fpl$dcmpinf)
+    x$fpl$ddiv                               0x08005e2c   Section      688  ddiv.o(x$fpl$ddiv)
+    $v0                                      0x08005e2c   Number         0  ddiv.o(x$fpl$ddiv)
+    ddiv_entry                               0x08005e33   Thumb Code     0  ddiv.o(x$fpl$ddiv)
+    x$fpl$dfix                               0x080060dc   Section       94  dfix.o(x$fpl$dfix)
+    $v0                                      0x080060dc   Number         0  dfix.o(x$fpl$dfix)
+    x$fpl$dleqf                              0x0800613c   Section      120  dleqf.o(x$fpl$dleqf)
+    $v0                                      0x0800613c   Number         0  dleqf.o(x$fpl$dleqf)
+    x$fpl$dmul                               0x080061b4   Section      340  dmul.o(x$fpl$dmul)
+    $v0                                      0x080061b4   Number         0  dmul.o(x$fpl$dmul)
+    x$fpl$dnaninf                            0x08006308   Section      156  dnaninf.o(x$fpl$dnaninf)
+    $v0                                      0x08006308   Number         0  dnaninf.o(x$fpl$dnaninf)
+    x$fpl$dretinf                            0x080063a4   Section       12  dretinf.o(x$fpl$dretinf)
+    $v0                                      0x080063a4   Number         0  dretinf.o(x$fpl$dretinf)
+    x$fpl$drleqf                             0x080063b0   Section      108  drleqf.o(x$fpl$drleqf)
+    $v0                                      0x080063b0   Number         0  drleqf.o(x$fpl$drleqf)
+    x$fpl$dsub                               0x0800641c   Section      468  daddsub_clz.o(x$fpl$dsub)
+    $v0                                      0x0800641c   Number         0  daddsub_clz.o(x$fpl$dsub)
+    _dsub1                                   0x0800642d   Thumb Code     0  daddsub_clz.o(x$fpl$dsub)
+    x$fpl$f2d                                0x080065f0   Section       86  f2d.o(x$fpl$f2d)
+    $v0                                      0x080065f0   Number         0  f2d.o(x$fpl$f2d)
+    x$fpl$fnaninf                            0x08006646   Section      140  fnaninf.o(x$fpl$fnaninf)
+    $v0                                      0x08006646   Number         0  fnaninf.o(x$fpl$fnaninf)
+    x$fpl$fpinit                             0x080066d2   Section       10  fpinit.o(x$fpl$fpinit)
+    $v0                                      0x080066d2   Number         0  fpinit.o(x$fpl$fpinit)
+    x$fpl$fretinf                            0x080066dc   Section       10  fretinf.o(x$fpl$fretinf)
+    $v0                                      0x080066dc   Number         0  fretinf.o(x$fpl$fretinf)
+    x$fpl$usenofp                            0x080066e6   Section        0  usenofp.o(x$fpl$usenofp)
+    .constdata                               0x080066e8   Section       36  main.o(.constdata)
+    .constdata                               0x0800670c   Section     6609  ov5640.o(.constdata)
+    OV5640_EXPOSURE_TBL                      0x08008051   Data          42  ov5640.o(.constdata)
+    OV5640_LIGHTMODE_TBL                     0x0800807b   Data          35  ov5640.o(.constdata)
+    OV5640_SATURATION_TBL                    0x0800809e   Data          42  ov5640.o(.constdata)
+    OV5640_EFFECTS_TBL                       0x080080c8   Data          21  ov5640.o(.constdata)
+    .constdata                               0x080080e0   Section      672  jcint.o(.constdata)
+    bits_dc_luminance                        0x080081e0   Data          17  jcint.o(.constdata)
+    val_dc_luminance                         0x080081f1   Data          12  jcint.o(.constdata)
+    bits_dc_chrominance                      0x080081fd   Data          17  jcint.o(.constdata)
+    val_dc_chrominance                       0x0800820e   Data          12  jcint.o(.constdata)
+    bits_ac_luminance                        0x0800821a   Data          17  jcint.o(.constdata)
+    val_ac_luminance                         0x0800822b   Data         162  jcint.o(.constdata)
+    bits_ac_chrominance                      0x080082cd   Data          17  jcint.o(.constdata)
+    val_ac_chrominance                       0x080082de   Data         162  jcint.o(.constdata)
+    .constdata                               0x08008380   Section       24  jcmarker.o(.constdata)
+    jfcode                                   0x08008380   Data          18  jcmarker.o(.constdata)
+    code                                     0x08008392   Data           6  jcmarker.o(.constdata)
+    .constdata                               0x08008398   Section       64  jutility.o(.constdata)
+    zz_order                                 0x08008398   Data          64  jutility.o(.constdata)
     .ARM.__AT_0x10000000                     0x10000000   Section    61440  malloc.o(.ARM.__AT_0x10000000)
     .ARM.__AT_0x1000F000                     0x1000f000   Section     3840  malloc.o(.ARM.__AT_0x1000F000)
     .data                                    0x20000000   Section       99  main.o(.data)
@@ -1558,25 +1549,27 @@ Image Symbol Table
     .bss                                     0x200001e8   Section    51728  main.o(.bss)
     jpeg_buf                                 0x200001e8   Data       32768  main.o(.bss)
     .bss                                     0x2000cbf8   Section       14  dcmi.o(.bss)
-    .bss                                     0x2000cc08   Section      240  delay.o(.bss)
-    .bss                                     0x2000ccf8   Section    33286  usart.o(.bss)
-    .bss                                     0x20014f00   Section     6552  filter.o(.bss)
-    .bss                                     0x20016898   Section       52  flow_s.o(.bss)
-    gyro_offset_filtered                     0x200168a8   Data          12  flow_s.o(.bss)
-    att_gyrospeed_filtered                   0x200168b4   Data          12  flow_s.o(.bss)
-    flow_gyrospeed_filtered                  0x200168c0   Data          12  flow_s.o(.bss)
-    .bss                                     0x200168cc   Section      256  dct.o(.bss)
-    .bss                                     0x200169cc   Section    13004  jcapi.o(.bss)
-    .bss                                     0x20019c98   Section     1024  jcint.o(.bss)
-    gtmp_hsize                               0x20019c98   Data         512  jcint.o(.bss)
-    gtmp_hcode                               0x20019e98   Data         512  jcint.o(.bss)
-    .bss                                     0x2001a098   Section    17176  jpg_code.o(.bss)
-    .bss                                     0x2001e3b0   Section       96  libspace.o(.bss)
-    HEAP                                     0x2001e410   Section      512  startup_stm32f40_41xxx.o(HEAP)
-    Heap_Mem                                 0x2001e410   Data         512  startup_stm32f40_41xxx.o(HEAP)
-    STACK                                    0x2001e610   Section     1024  startup_stm32f40_41xxx.o(STACK)
-    Stack_Mem                                0x2001e610   Data        1024  startup_stm32f40_41xxx.o(STACK)
-    __initial_sp                             0x2001ea10   Data           0  startup_stm32f40_41xxx.o(STACK)
+    .bss                                     0x2000cc08   Section      660  flow.o(.bss)
+    apr                                      0x2000ce90   Data          12  flow.o(.bss)
+    .bss                                     0x2000ce9c   Section      240  delay.o(.bss)
+    .bss                                     0x2000cf8c   Section    33286  usart.o(.bss)
+    .bss                                     0x20015194   Section     6552  filter.o(.bss)
+    .bss                                     0x20016b2c   Section       52  flow_s.o(.bss)
+    gyro_offset_filtered                     0x20016b3c   Data          12  flow_s.o(.bss)
+    att_gyrospeed_filtered                   0x20016b48   Data          12  flow_s.o(.bss)
+    flow_gyrospeed_filtered                  0x20016b54   Data          12  flow_s.o(.bss)
+    .bss                                     0x20016b60   Section      256  dct.o(.bss)
+    .bss                                     0x20016c60   Section    13004  jcapi.o(.bss)
+    .bss                                     0x20019f2c   Section     1024  jcint.o(.bss)
+    gtmp_hsize                               0x20019f2c   Data         512  jcint.o(.bss)
+    gtmp_hcode                               0x2001a12c   Data         512  jcint.o(.bss)
+    .bss                                     0x2001a32c   Section    17176  jpg_code.o(.bss)
+    .bss                                     0x2001e644   Section       96  libspace.o(.bss)
+    HEAP                                     0x2001e6a8   Section      512  startup_stm32f40_41xxx.o(HEAP)
+    Heap_Mem                                 0x2001e6a8   Data         512  startup_stm32f40_41xxx.o(HEAP)
+    STACK                                    0x2001e8a8   Section     1024  startup_stm32f40_41xxx.o(STACK)
+    Stack_Mem                                0x2001e8a8   Data        1024  startup_stm32f40_41xxx.o(STACK)
+    __initial_sp                             0x2001eca8   Data           0  startup_stm32f40_41xxx.o(STACK)
     .ARM.__AT_0x68000000                     0x68000000   Section    983040  malloc.o(.ARM.__AT_0x68000000)
     .ARM.__AT_0x680F0000                     0x680f0000   Section    61440  malloc.o(.ARM.__AT_0x680F0000)
 
@@ -1870,101 +1863,98 @@ Image Symbol Table
     USART_ReceiveData                        0x08002455   Thumb Code    10  stm32f4xx_usart.o(i.USART_ReceiveData)
     UsageFault_Handler                       0x0800245f   Thumb Code     4  stm32f4xx_it.o(i.UsageFault_Handler)
     __hardfp_fabs                            0x08002463   Thumb Code    20  fabs.o(i.__hardfp_fabs)
-    _sys_exit                                0x08002477   Thumb Code     6  usart.o(i._sys_exit)
-    bit_num                                  0x0800247d   Thumb Code    38  jchuff.o(i.bit_num)
-    compute_flow                             0x08002651   Thumb Code  2528  flow.o(i.compute_flow)
-    data_per_uart1                           0x080035b1   Thumb Code  1942  usart.o(i.data_per_uart1)
-    delay_init                               0x08003d55   Thumb Code    52  delay.o(i.delay_init)
-    delay_ms                                 0x08003d91   Thumb Code    56  delay.o(i.delay_ms)
-    delay_us                                 0x08003dc9   Thumb Code    72  delay.o(i.delay_us)
-    delay_xms                                0x08003e15   Thumb Code    72  delay.o(i.delay_xms)
-    dsp_fdct_8x8                             0x08003e61   Thumb Code  1636  dct.o(i.dsp_fdct_8x8)
-    firstOrderFilter                         0x080044c9   Thumb Code    90  filter.o(i.firstOrderFilter)
-    flow_pertreatment_oldx                   0x08004529   Thumb Code   938  flow_s.o(i.flow_pertreatment_oldx)
-    flow_task                                0x080048e9   Thumb Code   366  flow.o(i.flow_task)
-    gaussianFilter                           0x08004a85   Thumb Code   144  main.o(i.gaussianFilter)
-    initFirstOrderFilter                     0x08004b19   Thumb Code   542  filter.o(i.initFirstOrderFilter)
-    jhuff_encode_one_block                   0x08004d85   Thumb Code   200  jchuff.o(i.jhuff_encode_one_block)
-    jhuff_flush_buffer                       0x08004e4d   Thumb Code   118  jchuff.o(i.jhuff_flush_buffer)
-    jhuff_write_bits                         0x08004ecd   Thumb Code   124  jchuff.o(i.jhuff_write_bits)
-    jint_add_huff_table                      0x08004f51   Thumb Code   160  jcint.o(i.jint_add_huff_table)
-    jint_add_quant_table                     0x08004ff5   Thumb Code   116  jcint.o(i.jint_add_quant_table)
-    jint_calc_huff_tbl                       0x08005075   Thumb Code   172  jcint.o(i.jint_calc_huff_tbl)
-    jint_process_mcu                         0x08005129   Thumb Code   350  jcint.o(i.jint_process_mcu)
-    jint_process_rows                        0x08005295   Thumb Code   320  jcint.o(i.jint_process_rows)
-    jint_std_huff_tables                     0x080053d5   Thumb Code    70  jcint.o(i.jint_std_huff_tables)
-    jint_std_quant_tables                    0x0800543d   Thumb Code    68  jcint.o(i.jint_std_quant_tables)
-    jmkr_write_end                           0x08005485   Thumb Code    12  jcmarker.o(i.jmkr_write_end)
-    jmkr_write_frame_head                    0x08005491   Thumb Code   220  jcmarker.o(i.jmkr_write_frame_head)
-    jmkr_write_huff_table                    0x0800556d   Thumb Code   322  jcmarker.o(i.jmkr_write_huff_table)
-    jmkr_write_image_end                     0x080056af   Thumb Code    22  jcmarker.o(i.jmkr_write_image_end)
-    jmkr_write_image_start                   0x080056c5   Thumb Code    22  jcmarker.o(i.jmkr_write_image_start)
-    jmkr_write_jfif                          0x080056dd   Thumb Code    26  jcmarker.o(i.jmkr_write_jfif)
-    jmkr_write_quant_table                   0x080056fd   Thumb Code   104  jcmarker.o(i.jmkr_write_quant_table)
-    jmkr_write_scan_head                     0x08005765   Thumb Code   170  jcmarker.o(i.jmkr_write_scan_head)
-    jmkr_write_start                         0x0800580f   Thumb Code    42  jcmarker.o(i.jmkr_write_start)
-    jpeg_calc_value                          0x08005839   Thumb Code   270  jcapi.o(i.jpeg_calc_value)
-    jpeg_create_compress                     0x08005951   Thumb Code    24  jcapi.o(i.jpeg_create_compress)
-    jpeg_data_process                        0x0800596d   Thumb Code   340  main.o(i.jpeg_data_process)
-    jpeg_finish_compress                     0x08005af1   Thumb Code   130  jcapi.o(i.jpeg_finish_compress)
-    jpeg_set_default                         0x08005b73   Thumb Code   118  jcapi.o(i.jpeg_set_default)
-    jpeg_start_compress                      0x08005be9   Thumb Code    64  jcapi.o(i.jpeg_start_compress)
-    jpeg_write_scanline                      0x08005c29   Thumb Code   180  jcapi.o(i.jpeg_write_scanline)
-    jutl_cc_rgb2ycc                          0x08005cdd   Thumb Code   200  jutility.o(i.jutl_cc_rgb2ycc)
-    jutl_write_byte                          0x08005dc5   Thumb Code    30  jutility.o(i.jutl_write_byte)
-    jutl_zigzag_sort                         0x08005de9   Thumb Code    44  jutility.o(i.jutl_zigzag_sort)
-    main                                     0x08005e19   Thumb Code    96  main.o(i.main)
-    micros                                   0x08005e81   Thumb Code     8  delay.o(i.micros)
-    read_xy_rgb                              0x08005e8d   Thumb Code   130  flow.o(i.read_xy_rgb)
-    rgb565_test                              0x08005f15   Thumb Code  1804  main.o(i.rgb565_test)
-    uart_init2                               0x08006665   Thumb Code   162  usart.o(i.uart_init2)
-    __aeabi_dneg                             0x08006711   Thumb Code     0  basic.o(x$fpl$basic)
-    _dneg                                    0x08006711   Thumb Code     6  basic.o(x$fpl$basic)
-    __aeabi_fneg                             0x08006717   Thumb Code     0  basic.o(x$fpl$basic)
-    _fneg                                    0x08006717   Thumb Code     6  basic.o(x$fpl$basic)
-    _dabs                                    0x0800671d   Thumb Code     6  basic.o(x$fpl$basic)
-    _fabs                                    0x08006723   Thumb Code     6  basic.o(x$fpl$basic)
-    __aeabi_d2f                              0x08006729   Thumb Code     0  d2f.o(x$fpl$d2f)
-    _d2f                                     0x08006729   Thumb Code    98  d2f.o(x$fpl$d2f)
-    __aeabi_dadd                             0x0800678d   Thumb Code     0  daddsub_clz.o(x$fpl$dadd)
-    _dadd                                    0x0800678d   Thumb Code   332  daddsub_clz.o(x$fpl$dadd)
-    __fpl_dcmp_Inf                           0x080068dd   Thumb Code    24  dcmpi.o(x$fpl$dcmpinf)
-    __aeabi_ddiv                             0x080068f5   Thumb Code     0  ddiv.o(x$fpl$ddiv)
-    _ddiv                                    0x080068f5   Thumb Code   552  ddiv.o(x$fpl$ddiv)
-    __aeabi_d2iz                             0x08006ba5   Thumb Code     0  dfix.o(x$fpl$dfix)
-    _dfix                                    0x08006ba5   Thumb Code    94  dfix.o(x$fpl$dfix)
-    __aeabi_d2uiz                            0x08006c05   Thumb Code     0  dfixu.o(x$fpl$dfixu)
-    _dfixu                                   0x08006c05   Thumb Code    90  dfixu.o(x$fpl$dfixu)
-    __aeabi_ui2d                             0x08006c5f   Thumb Code     0  dflt_clz.o(x$fpl$dfltu)
-    _dfltu                                   0x08006c5f   Thumb Code    38  dflt_clz.o(x$fpl$dfltu)
-    __aeabi_cdcmple                          0x08006c85   Thumb Code     0  dleqf.o(x$fpl$dleqf)
-    _dcmple                                  0x08006c85   Thumb Code   120  dleqf.o(x$fpl$dleqf)
-    __fpl_dcmple_InfNaN                      0x08006ce7   Thumb Code     0  dleqf.o(x$fpl$dleqf)
-    __aeabi_dmul                             0x08006cfd   Thumb Code     0  dmul.o(x$fpl$dmul)
-    _dmul                                    0x08006cfd   Thumb Code   332  dmul.o(x$fpl$dmul)
-    __fpl_dnaninf                            0x08006e51   Thumb Code   156  dnaninf.o(x$fpl$dnaninf)
-    __fpl_dretinf                            0x08006eed   Thumb Code    12  dretinf.o(x$fpl$dretinf)
-    __aeabi_cdrcmple                         0x08006ef9   Thumb Code     0  drleqf.o(x$fpl$drleqf)
-    _drcmple                                 0x08006ef9   Thumb Code   108  drleqf.o(x$fpl$drleqf)
-    __aeabi_dsub                             0x08006f65   Thumb Code     0  daddsub_clz.o(x$fpl$dsub)
-    _dsub                                    0x08006f65   Thumb Code   464  daddsub_clz.o(x$fpl$dsub)
-    __aeabi_f2d                              0x08007139   Thumb Code     0  f2d.o(x$fpl$f2d)
-    _f2d                                     0x08007139   Thumb Code    86  f2d.o(x$fpl$f2d)
-    __fpl_fnaninf                            0x0800718f   Thumb Code   140  fnaninf.o(x$fpl$fnaninf)
-    _fp_init                                 0x0800721b   Thumb Code    10  fpinit.o(x$fpl$fpinit)
-    __fplib_config_fpu_vfp                   0x08007223   Thumb Code     0  fpinit.o(x$fpl$fpinit)
-    __fplib_config_pureend_doubles           0x08007223   Thumb Code     0  fpinit.o(x$fpl$fpinit)
-    __fpl_fretinf                            0x08007225   Thumb Code    10  fretinf.o(x$fpl$fretinf)
-    __I$use$fp                               0x0800722e   Number         0  usenofp.o(x$fpl$usenofp)
-    OV5640_jpeg_reg_tbl                      0x08007254   Data         164  ov5640.o(.constdata)
-    ov5640_rgb565_reg_tbl                    0x080072f8   Data         180  ov5640.o(.constdata)
-    ov5640_rgb565_reg_tbl_cif                0x080073ac   Data          60  ov5640.o(.constdata)
-    ov5640_rgb565_reg_tbl90                  0x080073e8   Data         980  ov5640.o(.constdata)
-    ov5640_rgb565_reg_tbl60                  0x080077bc   Data         180  ov5640.o(.constdata)
-    ov5640_init_reg_tbl                      0x08007870   Data         828  ov5640.o(.constdata)
-    OV5640_AF_Config                         0x08007bac   Data        4077  ov5640.o(.constdata)
-    Region$$Table$$Base                      0x08008f20   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x08008f40   Number         0  anon$$obj.o(Region$$Table)
+    __hardfp_floorf                          0x08002479   Thumb Code    98  floorf.o(i.__hardfp_floorf)
+    _sys_exit                                0x080024e9   Thumb Code     6  usart.o(i._sys_exit)
+    bit_num                                  0x080024ef   Thumb Code    38  jchuff.o(i.bit_num)
+    compute_klt                              0x08002515   Thumb Code  1750  flow.o(i.compute_klt)
+    data_per_uart1                           0x08002bf5   Thumb Code  1942  usart.o(i.data_per_uart1)
+    delay_init                               0x08003399   Thumb Code    52  delay.o(i.delay_init)
+    delay_ms                                 0x080033d5   Thumb Code    56  delay.o(i.delay_ms)
+    delay_us                                 0x0800340d   Thumb Code    72  delay.o(i.delay_us)
+    delay_xms                                0x08003459   Thumb Code    72  delay.o(i.delay_xms)
+    dsp_fdct_8x8                             0x080034a5   Thumb Code  1636  dct.o(i.dsp_fdct_8x8)
+    firstOrderFilter                         0x08003b0d   Thumb Code    90  filter.o(i.firstOrderFilter)
+    flow_pertreatment_oldx                   0x08003b6d   Thumb Code   938  flow_s.o(i.flow_pertreatment_oldx)
+    flow_task                                0x08003f2d   Thumb Code   186  flow.o(i.flow_task)
+    gaussianFilter                           0x08004009   Thumb Code   144  main.o(i.gaussianFilter)
+    initFirstOrderFilter                     0x0800409d   Thumb Code   542  filter.o(i.initFirstOrderFilter)
+    jhuff_encode_one_block                   0x08004309   Thumb Code   200  jchuff.o(i.jhuff_encode_one_block)
+    jhuff_flush_buffer                       0x080043d1   Thumb Code   118  jchuff.o(i.jhuff_flush_buffer)
+    jhuff_write_bits                         0x08004451   Thumb Code   124  jchuff.o(i.jhuff_write_bits)
+    jint_add_huff_table                      0x080044d5   Thumb Code   160  jcint.o(i.jint_add_huff_table)
+    jint_add_quant_table                     0x08004579   Thumb Code   116  jcint.o(i.jint_add_quant_table)
+    jint_calc_huff_tbl                       0x080045f9   Thumb Code   172  jcint.o(i.jint_calc_huff_tbl)
+    jint_process_mcu                         0x080046ad   Thumb Code   350  jcint.o(i.jint_process_mcu)
+    jint_process_rows                        0x08004819   Thumb Code   320  jcint.o(i.jint_process_rows)
+    jint_std_huff_tables                     0x08004959   Thumb Code    70  jcint.o(i.jint_std_huff_tables)
+    jint_std_quant_tables                    0x080049c1   Thumb Code    68  jcint.o(i.jint_std_quant_tables)
+    jmkr_write_end                           0x08004a09   Thumb Code    12  jcmarker.o(i.jmkr_write_end)
+    jmkr_write_frame_head                    0x08004a15   Thumb Code   220  jcmarker.o(i.jmkr_write_frame_head)
+    jmkr_write_huff_table                    0x08004af1   Thumb Code   322  jcmarker.o(i.jmkr_write_huff_table)
+    jmkr_write_image_end                     0x08004c33   Thumb Code    22  jcmarker.o(i.jmkr_write_image_end)
+    jmkr_write_image_start                   0x08004c49   Thumb Code    22  jcmarker.o(i.jmkr_write_image_start)
+    jmkr_write_jfif                          0x08004c61   Thumb Code    26  jcmarker.o(i.jmkr_write_jfif)
+    jmkr_write_quant_table                   0x08004c81   Thumb Code   104  jcmarker.o(i.jmkr_write_quant_table)
+    jmkr_write_scan_head                     0x08004ce9   Thumb Code   170  jcmarker.o(i.jmkr_write_scan_head)
+    jmkr_write_start                         0x08004d93   Thumb Code    42  jcmarker.o(i.jmkr_write_start)
+    jpeg_calc_value                          0x08004dbd   Thumb Code   270  jcapi.o(i.jpeg_calc_value)
+    jpeg_create_compress                     0x08004ed5   Thumb Code    24  jcapi.o(i.jpeg_create_compress)
+    jpeg_data_process                        0x08004ef1   Thumb Code   340  main.o(i.jpeg_data_process)
+    jpeg_finish_compress                     0x08005075   Thumb Code   130  jcapi.o(i.jpeg_finish_compress)
+    jpeg_set_default                         0x080050f7   Thumb Code   118  jcapi.o(i.jpeg_set_default)
+    jpeg_start_compress                      0x0800516d   Thumb Code    64  jcapi.o(i.jpeg_start_compress)
+    jpeg_write_scanline                      0x080051ad   Thumb Code   180  jcapi.o(i.jpeg_write_scanline)
+    jutl_cc_rgb2ycc                          0x08005261   Thumb Code   200  jutility.o(i.jutl_cc_rgb2ycc)
+    jutl_write_byte                          0x08005349   Thumb Code    30  jutility.o(i.jutl_write_byte)
+    jutl_zigzag_sort                         0x0800536d   Thumb Code    44  jutility.o(i.jutl_zigzag_sort)
+    main                                     0x0800539d   Thumb Code    96  main.o(i.main)
+    micros                                   0x08005405   Thumb Code     8  delay.o(i.micros)
+    read_xy_rgb                              0x08005411   Thumb Code   130  flow.o(i.read_xy_rgb)
+    rgb565_test                              0x08005499   Thumb Code  1736  main.o(i.rgb565_test)
+    uart_init2                               0x08005b9d   Thumb Code   162  usart.o(i.uart_init2)
+    __aeabi_dneg                             0x08005c49   Thumb Code     0  basic.o(x$fpl$basic)
+    _dneg                                    0x08005c49   Thumb Code     6  basic.o(x$fpl$basic)
+    __aeabi_fneg                             0x08005c4f   Thumb Code     0  basic.o(x$fpl$basic)
+    _fneg                                    0x08005c4f   Thumb Code     6  basic.o(x$fpl$basic)
+    _dabs                                    0x08005c55   Thumb Code     6  basic.o(x$fpl$basic)
+    _fabs                                    0x08005c5b   Thumb Code     6  basic.o(x$fpl$basic)
+    __aeabi_d2f                              0x08005c61   Thumb Code     0  d2f.o(x$fpl$d2f)
+    _d2f                                     0x08005c61   Thumb Code    98  d2f.o(x$fpl$d2f)
+    __aeabi_dadd                             0x08005cc5   Thumb Code     0  daddsub_clz.o(x$fpl$dadd)
+    _dadd                                    0x08005cc5   Thumb Code   332  daddsub_clz.o(x$fpl$dadd)
+    __fpl_dcmp_Inf                           0x08005e15   Thumb Code    24  dcmpi.o(x$fpl$dcmpinf)
+    __aeabi_ddiv                             0x08005e2d   Thumb Code     0  ddiv.o(x$fpl$ddiv)
+    _ddiv                                    0x08005e2d   Thumb Code   552  ddiv.o(x$fpl$ddiv)
+    __aeabi_d2iz                             0x080060dd   Thumb Code     0  dfix.o(x$fpl$dfix)
+    _dfix                                    0x080060dd   Thumb Code    94  dfix.o(x$fpl$dfix)
+    __aeabi_cdcmple                          0x0800613d   Thumb Code     0  dleqf.o(x$fpl$dleqf)
+    _dcmple                                  0x0800613d   Thumb Code   120  dleqf.o(x$fpl$dleqf)
+    __fpl_dcmple_InfNaN                      0x0800619f   Thumb Code     0  dleqf.o(x$fpl$dleqf)
+    __aeabi_dmul                             0x080061b5   Thumb Code     0  dmul.o(x$fpl$dmul)
+    _dmul                                    0x080061b5   Thumb Code   332  dmul.o(x$fpl$dmul)
+    __fpl_dnaninf                            0x08006309   Thumb Code   156  dnaninf.o(x$fpl$dnaninf)
+    __fpl_dretinf                            0x080063a5   Thumb Code    12  dretinf.o(x$fpl$dretinf)
+    __aeabi_cdrcmple                         0x080063b1   Thumb Code     0  drleqf.o(x$fpl$drleqf)
+    _drcmple                                 0x080063b1   Thumb Code   108  drleqf.o(x$fpl$drleqf)
+    __aeabi_dsub                             0x0800641d   Thumb Code     0  daddsub_clz.o(x$fpl$dsub)
+    _dsub                                    0x0800641d   Thumb Code   464  daddsub_clz.o(x$fpl$dsub)
+    __aeabi_f2d                              0x080065f1   Thumb Code     0  f2d.o(x$fpl$f2d)
+    _f2d                                     0x080065f1   Thumb Code    86  f2d.o(x$fpl$f2d)
+    __fpl_fnaninf                            0x08006647   Thumb Code   140  fnaninf.o(x$fpl$fnaninf)
+    _fp_init                                 0x080066d3   Thumb Code    10  fpinit.o(x$fpl$fpinit)
+    __fplib_config_fpu_vfp                   0x080066db   Thumb Code     0  fpinit.o(x$fpl$fpinit)
+    __fplib_config_pureend_doubles           0x080066db   Thumb Code     0  fpinit.o(x$fpl$fpinit)
+    __fpl_fretinf                            0x080066dd   Thumb Code    10  fretinf.o(x$fpl$fretinf)
+    __I$use$fp                               0x080066e6   Number         0  usenofp.o(x$fpl$usenofp)
+    OV5640_jpeg_reg_tbl                      0x0800670c   Data         164  ov5640.o(.constdata)
+    ov5640_rgb565_reg_tbl                    0x080067b0   Data         180  ov5640.o(.constdata)
+    ov5640_rgb565_reg_tbl_cif                0x08006864   Data          60  ov5640.o(.constdata)
+    ov5640_rgb565_reg_tbl90                  0x080068a0   Data         980  ov5640.o(.constdata)
+    ov5640_rgb565_reg_tbl60                  0x08006c74   Data         180  ov5640.o(.constdata)
+    ov5640_init_reg_tbl                      0x08006d28   Data         828  ov5640.o(.constdata)
+    OV5640_AF_Config                         0x08007064   Data        4077  ov5640.o(.constdata)
+    Region$$Table$$Base                      0x080083d8   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x080083f8   Number         0  anon$$obj.o(Region$$Table)
     mem3base                                 0x10000000   Data       61440  malloc.o(.ARM.__AT_0x10000000)
     mem3mapbase                              0x1000f000   Data        3840  malloc.o(.ARM.__AT_0x1000F000)
     MAX_BRIGHT                               0x20000000   Data           1  main.o(.data)
@@ -2013,12 +2003,13 @@ Image Symbol Table
     en_gro_filter                            0x2000009a   Data           1  flow.o(.data)
     meancount_set_klt                        0x2000009b   Data           1  flow.o(.data)
     max_iter                                 0x2000009c   Data           1  flow.o(.data)
-    gray_scal                                0x2000009d   Data           1  flow.o(.data)
-    off_pix                                  0x2000009e   Data           1  flow.o(.data)
-    meancount_view                           0x200000a0   Data           2  flow.o(.data)
-    y_rate_view                              0x200000a4   Data           4  flow.o(.data)
-    meancount_v_klt                          0x200000a8   Data           1  flow.o(.data)
-    flow_fps                                 0x200000a9   Data           1  flow.o(.data)
+    k_klt                                    0x200000a0   Data           4  flow.o(.data)
+    gray_scal                                0x200000a4   Data           1  flow.o(.data)
+    off_pix                                  0x200000a5   Data           1  flow.o(.data)
+    meancount_view                           0x200000a6   Data           2  flow.o(.data)
+    y_rate_view                              0x200000a8   Data           4  flow.o(.data)
+    meancount_v_klt                          0x200000ac   Data           1  flow.o(.data)
+    flow_fps                                 0x200000ad   Data           1  flow.o(.data)
     pixel_flow_x                             0x200000b0   Data           8  flow.o(.data)
     pixel_flow_y                             0x200000b8   Data           8  flow.o(.data)
     pixel_flow_x_klt                         0x200000c0   Data           8  flow.o(.data)
@@ -2084,28 +2075,30 @@ Image Symbol Table
     P_KF_NAV                                 0x2000cb18   Data         144  main.o(.bss)
     flow                                     0x2000cba8   Data          80  main.o(.bss)
     DCMI_InitStructure                       0x2000cbf8   Data          14  dcmi.o(.bss)
-    Cycle_T                                  0x2000cc08   Data         240  delay.o(.bss)
-    Rx_Buf_app                               0x2000ccf8   Data         256  usart.o(.bss)
-    RxBuffer_app                             0x2000cdf8   Data          50  usart.o(.bss)
-    mpu6050_fc                               0x2000ce2c   Data         128  usart.o(.bss)
-    RxBuffer                                 0x2000ceac   Data          50  usart.o(.bss)
-    SendBuff2                                0x2000cede   Data       16384  usart.o(.bss)
-    SendBuff1                                0x20010ede   Data       16384  usart.o(.bss)
-    BLE_DEBUG                                0x20014ede   Data          32  usart.o(.bss)
-    med_filter_tmp                           0x20014f00   Data        6000  filter.o(.bss)
-    med_filter_out                           0x20016670   Data         120  filter.o(.bss)
-    med_fil_cnt                              0x200166e8   Data          30  filter.o(.bss)
-    firstOrderFilters                        0x20016708   Data         400  filter.o(.bss)
-    flow_per_out                             0x20016898   Data          16  flow_s.o(.bss)
-    temp_dct1                                0x200168cc   Data         256  dct.o(.bss)
-    dcttab                                   0x200169cc   Data        1536  jcapi.o(.bss)
-    inbuf_buf                                0x20016fcc   Data       11468  jcapi.o(.bss)
-    JPG_enc_buf                              0x2001a098   Data       11468  jpg_code.o(.bss)
-    info1                                    0x2001cd64   Data         260  jpg_code.o(.bss)
-    JQUANT_TBL_2                             0x2001ce68   Data         256  jpg_code.o(.bss)
-    JHUFF_TBL_4                              0x2001cf68   Data        5192  jpg_code.o(.bss)
-    __libspace_start                         0x2001e3b0   Data          96  libspace.o(.bss)
-    __temporary_stack_top$libspace           0x2001e410   Data           0  libspace.o(.bss)
+    Jx                                       0x2000cc08   Data         324  flow.o(.bss)
+    Jy                                       0x2000cd4c   Data         324  flow.o(.bss)
+    Cycle_T                                  0x2000ce9c   Data         240  delay.o(.bss)
+    Rx_Buf_app                               0x2000cf8c   Data         256  usart.o(.bss)
+    RxBuffer_app                             0x2000d08c   Data          50  usart.o(.bss)
+    mpu6050_fc                               0x2000d0c0   Data         128  usart.o(.bss)
+    RxBuffer                                 0x2000d140   Data          50  usart.o(.bss)
+    SendBuff2                                0x2000d172   Data       16384  usart.o(.bss)
+    SendBuff1                                0x20011172   Data       16384  usart.o(.bss)
+    BLE_DEBUG                                0x20015172   Data          32  usart.o(.bss)
+    med_filter_tmp                           0x20015194   Data        6000  filter.o(.bss)
+    med_filter_out                           0x20016904   Data         120  filter.o(.bss)
+    med_fil_cnt                              0x2001697c   Data          30  filter.o(.bss)
+    firstOrderFilters                        0x2001699c   Data         400  filter.o(.bss)
+    flow_per_out                             0x20016b2c   Data          16  flow_s.o(.bss)
+    temp_dct1                                0x20016b60   Data         256  dct.o(.bss)
+    dcttab                                   0x20016c60   Data        1536  jcapi.o(.bss)
+    inbuf_buf                                0x20017260   Data       11468  jcapi.o(.bss)
+    JPG_enc_buf                              0x2001a32c   Data       11468  jpg_code.o(.bss)
+    info1                                    0x2001cff8   Data         260  jpg_code.o(.bss)
+    JQUANT_TBL_2                             0x2001d0fc   Data         256  jpg_code.o(.bss)
+    JHUFF_TBL_4                              0x2001d1fc   Data        5192  jpg_code.o(.bss)
+    __libspace_start                         0x2001e644   Data          96  libspace.o(.bss)
+    __temporary_stack_top$libspace           0x2001e6a4   Data           0  libspace.o(.bss)
     mem2base                                 0x68000000   Data       983040  malloc.o(.ARM.__AT_0x68000000)
     mem2mapbase                              0x680f0000   Data       61440  malloc.o(.ARM.__AT_0x680F0000)
 
@@ -2117,9 +2110,9 @@ Memory Map of the image
 
   Image Entry point : 0x08000189
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00009128, Max: 0x00100000, ABSOLUTE, COMPRESSED[0x00008fbc])
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x000085e0, Max: 0x00100000, ABSOLUTE, COMPRESSED[0x0000847c])
 
-    Execution Region ER_IROM1 (Base: 0x08000000, Size: 0x00008f40, Max: 0x00100000, ABSOLUTE)
+    Execution Region ER_IROM1 (Base: 0x08000000, Size: 0x000083f8, Max: 0x00100000, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -2293,91 +2286,87 @@ Memory Map of the image
     0x08002454   0x0000000a   Code   RO         2589    i.USART_ReceiveData  stm32f4xx_usart.o
     0x0800245e   0x00000004   Code   RO          271    i.UsageFault_Handler  stm32f4xx_it.o
     0x08002462   0x00000014   Code   RO         3741    i.__hardfp_fabs     m_wm.l(fabs.o)
-    0x08002476   0x00000006   Code   RO          998    i._sys_exit         usart.o
-    0x0800247c   0x00000026   Code   RO         3315    i.bit_num           jchuff.o
-    0x080024a2   0x000001ac   Code   RO          802    i.compute_diff      flow.o
-    0x0800264e   0x00000002   PAD
-    0x08002650   0x000009e8   Code   RO          803    i.compute_flow      flow.o
-    0x08003038   0x00000224   Code   RO          805    i.compute_sad_8x8   flow.o
-    0x0800325c   0x00000354   Code   RO          806    i.compute_subpixel  flow.o
-    0x080035b0   0x000007a4   Code   RO          999    i.data_per_uart1    usart.o
-    0x08003d54   0x0000003c   Code   RO          893    i.delay_init        delay.o
-    0x08003d90   0x00000038   Code   RO          894    i.delay_ms          delay.o
-    0x08003dc8   0x0000004c   Code   RO          895    i.delay_us          delay.o
-    0x08003e14   0x0000004c   Code   RO          896    i.delay_xms         delay.o
-    0x08003e60   0x00000668   Code   RO         3294    i.dsp_fdct_8x8      dct.o
-    0x080044c8   0x00000060   Code   RO         3204    i.firstOrderFilter  filter.o
-    0x08004528   0x000003c0   Code   RO         3268    i.flow_pertreatment_oldx  flow_s.o
-    0x080048e8   0x0000019c   Code   RO          807    i.flow_task         flow.o
-    0x08004a84   0x00000094   Code   RO            6    i.gaussianFilter    main.o
-    0x08004b18   0x0000026c   Code   RO         3205    i.initFirstOrderFilter  filter.o
-    0x08004d84   0x000000c8   Code   RO         3316    i.jhuff_encode_one_block  jchuff.o
-    0x08004e4c   0x00000080   Code   RO         3317    i.jhuff_flush_buffer  jchuff.o
-    0x08004ecc   0x00000084   Code   RO         3318    i.jhuff_write_bits  jchuff.o
-    0x08004f50   0x000000a4   Code   RO         3424    i.jint_add_huff_table  jcint.o
-    0x08004ff4   0x00000080   Code   RO         3425    i.jint_add_quant_table  jcint.o
-    0x08005074   0x000000b4   Code   RO         3426    i.jint_calc_huff_tbl  jcint.o
-    0x08005128   0x0000016c   Code   RO         3427    i.jint_process_mcu  jcint.o
-    0x08005294   0x00000140   Code   RO         3428    i.jint_process_rows  jcint.o
-    0x080053d4   0x00000068   Code   RO         3429    i.jint_std_huff_tables  jcint.o
-    0x0800543c   0x00000048   Code   RO         3430    i.jint_std_quant_tables  jcint.o
-    0x08005484   0x0000000c   Code   RO         3477    i.jmkr_write_end    jcmarker.o
-    0x08005490   0x000000dc   Code   RO         3478    i.jmkr_write_frame_head  jcmarker.o
-    0x0800556c   0x00000142   Code   RO         3479    i.jmkr_write_huff_table  jcmarker.o
-    0x080056ae   0x00000016   Code   RO         3480    i.jmkr_write_image_end  jcmarker.o
-    0x080056c4   0x00000016   Code   RO         3481    i.jmkr_write_image_start  jcmarker.o
-    0x080056da   0x00000002   PAD
-    0x080056dc   0x00000020   Code   RO         3482    i.jmkr_write_jfif   jcmarker.o
-    0x080056fc   0x00000068   Code   RO         3483    i.jmkr_write_quant_table  jcmarker.o
-    0x08005764   0x000000aa   Code   RO         3484    i.jmkr_write_scan_head  jcmarker.o
-    0x0800580e   0x0000002a   Code   RO         3485    i.jmkr_write_start  jcmarker.o
-    0x08005838   0x00000118   Code   RO         3349    i.jpeg_calc_value   jcapi.o
-    0x08005950   0x0000001c   Code   RO         3350    i.jpeg_create_compress  jcapi.o
-    0x0800596c   0x00000184   Code   RO            8    i.jpeg_data_process  main.o
-    0x08005af0   0x00000082   Code   RO         3352    i.jpeg_finish_compress  jcapi.o
-    0x08005b72   0x00000076   Code   RO         3353    i.jpeg_set_default  jcapi.o
-    0x08005be8   0x00000040   Code   RO         3354    i.jpeg_start_compress  jcapi.o
-    0x08005c28   0x000000b4   Code   RO         3355    i.jpeg_write_scanline  jcapi.o
-    0x08005cdc   0x000000e8   Code   RO         3577    i.jutl_cc_rgb2ycc   jutility.o
-    0x08005dc4   0x00000024   Code   RO         3578    i.jutl_write_byte   jutility.o
-    0x08005de8   0x00000030   Code   RO         3579    i.jutl_zigzag_sort  jutility.o
-    0x08005e18   0x00000068   Code   RO            9    i.main              main.o
-    0x08005e80   0x0000000c   Code   RO          897    i.micros            delay.o
-    0x08005e8c   0x00000088   Code   RO          808    i.read_xy_rgb       flow.o
-    0x08005f14   0x00000750   Code   RO           10    i.rgb565_test       main.o
-    0x08006664   0x000000ac   Code   RO         1002    i.uart_init2        usart.o
-    0x08006710   0x00000018   Code   RO         3705    x$fpl$basic         fz_wm.l(basic.o)
-    0x08006728   0x00000062   Code   RO         3707    x$fpl$d2f           fz_wm.l(d2f.o)
-    0x0800678a   0x00000002   PAD
-    0x0800678c   0x00000150   Code   RO         3709    x$fpl$dadd          fz_wm.l(daddsub_clz.o)
-    0x080068dc   0x00000018   Code   RO         3756    x$fpl$dcmpinf       fz_wm.l(dcmpi.o)
-    0x080068f4   0x000002b0   Code   RO         3716    x$fpl$ddiv          fz_wm.l(ddiv.o)
-    0x08006ba4   0x0000005e   Code   RO         3719    x$fpl$dfix          fz_wm.l(dfix.o)
-    0x08006c02   0x00000002   PAD
-    0x08006c04   0x0000005a   Code   RO         3723    x$fpl$dfixu         fz_wm.l(dfixu.o)
-    0x08006c5e   0x00000026   Code   RO         3727    x$fpl$dfltu         fz_wm.l(dflt_clz.o)
-    0x08006c84   0x00000078   Code   RO         3733    x$fpl$dleqf         fz_wm.l(dleqf.o)
-    0x08006cfc   0x00000154   Code   RO         3735    x$fpl$dmul          fz_wm.l(dmul.o)
-    0x08006e50   0x0000009c   Code   RO         3758    x$fpl$dnaninf       fz_wm.l(dnaninf.o)
-    0x08006eec   0x0000000c   Code   RO         3760    x$fpl$dretinf       fz_wm.l(dretinf.o)
-    0x08006ef8   0x0000006c   Code   RO         3737    x$fpl$drleqf        fz_wm.l(drleqf.o)
-    0x08006f64   0x000001d4   Code   RO         3711    x$fpl$dsub          fz_wm.l(daddsub_clz.o)
-    0x08007138   0x00000056   Code   RO         3739    x$fpl$f2d           fz_wm.l(f2d.o)
-    0x0800718e   0x0000008c   Code   RO         3762    x$fpl$fnaninf       fz_wm.l(fnaninf.o)
-    0x0800721a   0x0000000a   Code   RO         3851    x$fpl$fpinit        fz_wm.l(fpinit.o)
-    0x08007224   0x0000000a   Code   RO         3764    x$fpl$fretinf       fz_wm.l(fretinf.o)
-    0x0800722e   0x00000000   Code   RO         3766    x$fpl$usenofp       fz_wm.l(usenofp.o)
-    0x0800722e   0x00000002   PAD
-    0x08007230   0x00000024   Data   RO           12    .constdata          main.o
-    0x08007254   0x000019d1   Data   RO          527    .constdata          ov5640.o
-    0x08008c25   0x00000003   PAD
-    0x08008c28   0x000002a0   Data   RO         3432    .constdata          jcint.o
-    0x08008ec8   0x00000018   Data   RO         3486    .constdata          jcmarker.o
-    0x08008ee0   0x00000040   Data   RO         3580    .constdata          jutility.o
-    0x08008f20   0x00000020   Data   RO         3915    Region$$Table       anon$$obj.o
+    0x08002476   0x00000002   PAD
+    0x08002478   0x00000070   Code   RO         3747    i.__hardfp_floorf   m_wm.l(floorf.o)
+    0x080024e8   0x00000006   Code   RO          998    i._sys_exit         usart.o
+    0x080024ee   0x00000026   Code   RO         3315    i.bit_num           jchuff.o
+    0x08002514   0x000006e0   Code   RO          804    i.compute_klt       flow.o
+    0x08002bf4   0x000007a4   Code   RO          999    i.data_per_uart1    usart.o
+    0x08003398   0x0000003c   Code   RO          893    i.delay_init        delay.o
+    0x080033d4   0x00000038   Code   RO          894    i.delay_ms          delay.o
+    0x0800340c   0x0000004c   Code   RO          895    i.delay_us          delay.o
+    0x08003458   0x0000004c   Code   RO          896    i.delay_xms         delay.o
+    0x080034a4   0x00000668   Code   RO         3294    i.dsp_fdct_8x8      dct.o
+    0x08003b0c   0x00000060   Code   RO         3204    i.firstOrderFilter  filter.o
+    0x08003b6c   0x000003c0   Code   RO         3268    i.flow_pertreatment_oldx  flow_s.o
+    0x08003f2c   0x000000dc   Code   RO          807    i.flow_task         flow.o
+    0x08004008   0x00000094   Code   RO            6    i.gaussianFilter    main.o
+    0x0800409c   0x0000026c   Code   RO         3205    i.initFirstOrderFilter  filter.o
+    0x08004308   0x000000c8   Code   RO         3316    i.jhuff_encode_one_block  jchuff.o
+    0x080043d0   0x00000080   Code   RO         3317    i.jhuff_flush_buffer  jchuff.o
+    0x08004450   0x00000084   Code   RO         3318    i.jhuff_write_bits  jchuff.o
+    0x080044d4   0x000000a4   Code   RO         3424    i.jint_add_huff_table  jcint.o
+    0x08004578   0x00000080   Code   RO         3425    i.jint_add_quant_table  jcint.o
+    0x080045f8   0x000000b4   Code   RO         3426    i.jint_calc_huff_tbl  jcint.o
+    0x080046ac   0x0000016c   Code   RO         3427    i.jint_process_mcu  jcint.o
+    0x08004818   0x00000140   Code   RO         3428    i.jint_process_rows  jcint.o
+    0x08004958   0x00000068   Code   RO         3429    i.jint_std_huff_tables  jcint.o
+    0x080049c0   0x00000048   Code   RO         3430    i.jint_std_quant_tables  jcint.o
+    0x08004a08   0x0000000c   Code   RO         3477    i.jmkr_write_end    jcmarker.o
+    0x08004a14   0x000000dc   Code   RO         3478    i.jmkr_write_frame_head  jcmarker.o
+    0x08004af0   0x00000142   Code   RO         3479    i.jmkr_write_huff_table  jcmarker.o
+    0x08004c32   0x00000016   Code   RO         3480    i.jmkr_write_image_end  jcmarker.o
+    0x08004c48   0x00000016   Code   RO         3481    i.jmkr_write_image_start  jcmarker.o
+    0x08004c5e   0x00000002   PAD
+    0x08004c60   0x00000020   Code   RO         3482    i.jmkr_write_jfif   jcmarker.o
+    0x08004c80   0x00000068   Code   RO         3483    i.jmkr_write_quant_table  jcmarker.o
+    0x08004ce8   0x000000aa   Code   RO         3484    i.jmkr_write_scan_head  jcmarker.o
+    0x08004d92   0x0000002a   Code   RO         3485    i.jmkr_write_start  jcmarker.o
+    0x08004dbc   0x00000118   Code   RO         3349    i.jpeg_calc_value   jcapi.o
+    0x08004ed4   0x0000001c   Code   RO         3350    i.jpeg_create_compress  jcapi.o
+    0x08004ef0   0x00000184   Code   RO            8    i.jpeg_data_process  main.o
+    0x08005074   0x00000082   Code   RO         3352    i.jpeg_finish_compress  jcapi.o
+    0x080050f6   0x00000076   Code   RO         3353    i.jpeg_set_default  jcapi.o
+    0x0800516c   0x00000040   Code   RO         3354    i.jpeg_start_compress  jcapi.o
+    0x080051ac   0x000000b4   Code   RO         3355    i.jpeg_write_scanline  jcapi.o
+    0x08005260   0x000000e8   Code   RO         3577    i.jutl_cc_rgb2ycc   jutility.o
+    0x08005348   0x00000024   Code   RO         3578    i.jutl_write_byte   jutility.o
+    0x0800536c   0x00000030   Code   RO         3579    i.jutl_zigzag_sort  jutility.o
+    0x0800539c   0x00000068   Code   RO            9    i.main              main.o
+    0x08005404   0x0000000c   Code   RO          897    i.micros            delay.o
+    0x08005410   0x00000088   Code   RO          808    i.read_xy_rgb       flow.o
+    0x08005498   0x00000704   Code   RO           10    i.rgb565_test       main.o
+    0x08005b9c   0x000000ac   Code   RO         1002    i.uart_init2        usart.o
+    0x08005c48   0x00000018   Code   RO         3705    x$fpl$basic         fz_wm.l(basic.o)
+    0x08005c60   0x00000062   Code   RO         3707    x$fpl$d2f           fz_wm.l(d2f.o)
+    0x08005cc2   0x00000002   PAD
+    0x08005cc4   0x00000150   Code   RO         3709    x$fpl$dadd          fz_wm.l(daddsub_clz.o)
+    0x08005e14   0x00000018   Code   RO         3756    x$fpl$dcmpinf       fz_wm.l(dcmpi.o)
+    0x08005e2c   0x000002b0   Code   RO         3716    x$fpl$ddiv          fz_wm.l(ddiv.o)
+    0x080060dc   0x0000005e   Code   RO         3719    x$fpl$dfix          fz_wm.l(dfix.o)
+    0x0800613a   0x00000002   PAD
+    0x0800613c   0x00000078   Code   RO         3733    x$fpl$dleqf         fz_wm.l(dleqf.o)
+    0x080061b4   0x00000154   Code   RO         3735    x$fpl$dmul          fz_wm.l(dmul.o)
+    0x08006308   0x0000009c   Code   RO         3758    x$fpl$dnaninf       fz_wm.l(dnaninf.o)
+    0x080063a4   0x0000000c   Code   RO         3760    x$fpl$dretinf       fz_wm.l(dretinf.o)
+    0x080063b0   0x0000006c   Code   RO         3737    x$fpl$drleqf        fz_wm.l(drleqf.o)
+    0x0800641c   0x000001d4   Code   RO         3711    x$fpl$dsub          fz_wm.l(daddsub_clz.o)
+    0x080065f0   0x00000056   Code   RO         3739    x$fpl$f2d           fz_wm.l(f2d.o)
+    0x08006646   0x0000008c   Code   RO         3762    x$fpl$fnaninf       fz_wm.l(fnaninf.o)
+    0x080066d2   0x0000000a   Code   RO         3851    x$fpl$fpinit        fz_wm.l(fpinit.o)
+    0x080066dc   0x0000000a   Code   RO         3764    x$fpl$fretinf       fz_wm.l(fretinf.o)
+    0x080066e6   0x00000000   Code   RO         3766    x$fpl$usenofp       fz_wm.l(usenofp.o)
+    0x080066e6   0x00000002   PAD
+    0x080066e8   0x00000024   Data   RO           12    .constdata          main.o
+    0x0800670c   0x000019d1   Data   RO          527    .constdata          ov5640.o
+    0x080080dd   0x00000003   PAD
+    0x080080e0   0x000002a0   Data   RO         3432    .constdata          jcint.o
+    0x08008380   0x00000018   Data   RO         3486    .constdata          jcmarker.o
+    0x08008398   0x00000040   Data   RO         3580    .constdata          jutility.o
+    0x080083d8   0x00000020   Data   RO         3915    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Base: 0x20000000, Size: 0x0001ea10, Max: 0x00020000, ABSOLUTE, COMPRESSED[0x0000007c])
+    Execution Region RW_IRAM1 (Base: 0x20000000, Size: 0x0001eca8, Max: 0x00020000, ABSOLUTE, COMPRESSED[0x00000084])
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -2398,18 +2387,20 @@ Memory Map of the image
     0x200001e8   0x0000ca10   Zero   RW           11    .bss                main.o
     0x2000cbf8   0x0000000e   Zero   RW          455    .bss                dcmi.o
     0x2000cc06   0x00000002   PAD
-    0x2000cc08   0x000000f0   Zero   RW          898    .bss                delay.o
-    0x2000ccf8   0x00008206   Zero   RW         1003    .bss                usart.o
-    0x20014efe   0x00000002   PAD
-    0x20014f00   0x00001998   Zero   RW         3207    .bss                filter.o
-    0x20016898   0x00000034   Zero   RW         3269    .bss                flow_s.o
-    0x200168cc   0x00000100   Zero   RW         3296    .bss                dct.o
-    0x200169cc   0x000032cc   Zero   RW         3356    .bss                jcapi.o
-    0x20019c98   0x00000400   Zero   RW         3431    .bss                jcint.o
-    0x2001a098   0x00004318   Zero   RW         3547    .bss                jpg_code.o
-    0x2001e3b0   0x00000060   Zero   RW         3793    .bss                c_w.l(libspace.o)
-    0x2001e410   0x00000200   Zero   RW         1162    HEAP                startup_stm32f40_41xxx.o
-    0x2001e610   0x00000400   Zero   RW         1161    STACK               startup_stm32f40_41xxx.o
+    0x2000cc08   0x00000294   Zero   RW          809    .bss                flow.o
+    0x2000ce9c   0x000000f0   Zero   RW          898    .bss                delay.o
+    0x2000cf8c   0x00008206   Zero   RW         1003    .bss                usart.o
+    0x20015192   0x00000002   PAD
+    0x20015194   0x00001998   Zero   RW         3207    .bss                filter.o
+    0x20016b2c   0x00000034   Zero   RW         3269    .bss                flow_s.o
+    0x20016b60   0x00000100   Zero   RW         3296    .bss                dct.o
+    0x20016c60   0x000032cc   Zero   RW         3356    .bss                jcapi.o
+    0x20019f2c   0x00000400   Zero   RW         3431    .bss                jcint.o
+    0x2001a32c   0x00004318   Zero   RW         3547    .bss                jpg_code.o
+    0x2001e644   0x00000060   Zero   RW         3793    .bss                c_w.l(libspace.o)
+    0x2001e6a4   0x00000004   PAD
+    0x2001e6a8   0x00000200   Zero   RW         1162    HEAP                startup_stm32f40_41xxx.o
+    0x2001e8a8   0x00000400   Zero   RW         1161    STACK               startup_stm32f40_41xxx.o
 
 
 
@@ -2465,7 +2456,7 @@ Image component sizes
        232          4          0          0          0       1790   dma.o
         44          0          0          0          0       1048   dog.o
        716         84          0         89       6552       4585   filter.o
-      5008        124          0        180          0      16378   flow.o
+      2212         70          0        180        660      12223   flow.o
        960         22          0         21         52       3313   flow_s.o
        800         14          0          0      13004       5386   jcapi.o
        498         18          0          8          0       3647   jchuff.o
@@ -2475,7 +2466,7 @@ Image component sizes
        316         42         64          0          0       2528   jutility.o
         68          8          0          0          0        523   key.o
         60          4          0          0          0       5984   led.o
-      2908        328         36         99      51728     309159   main.o
+      2832        316         36         99      51728     309159   main.o
          0          0          0          0    1109760       1762   malloc.o
        180         24          0          0          0       2017   misc.o
       1588         60       6609          0          0      10971   ov5640.o
@@ -2494,9 +2485,9 @@ Image component sizes
       3422        120          0         28      33286      20413   usart.o
 
     ----------------------------------------------------------------------
-     25252       1382       7832        488    1234632     459041   Object Totals
+     22378       1316       7832        488    1235292     454886   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-        24          0          3         10          4          0   (incl. Padding)
+        22          0          3         10          4          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -2531,8 +2522,6 @@ Image component sizes
         24          0          0          0          0        116   dcmpi.o
        688        140          0          0          0        256   ddiv.o
         94          4          0          0          0        140   dfix.o
-        90          4          0          0          0        140   dfixu.o
-        38          0          0          0          0        116   dflt_clz.o
        120          4          0          0          0        140   dleqf.o
        340         12          0          0          0        152   dmul.o
        156          4          0          0          0        140   dnaninf.o
@@ -2544,21 +2533,22 @@ Image component sizes
         10          0          0          0          0        116   fretinf.o
          0          0          0          0          0          0   usenofp.o
         20          0          0          0          0        124   fabs.o
+       112         14          0          0          0        116   floorf.o
 
     ----------------------------------------------------------------------
-      3588        208          0          0         96       3616   Library Totals
-        12          0          0          0          0          0   (incl. Padding)
+      3574        218          0          0        100       3476   Library Totals
+        14          0          0          0          4          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Library Name
 
        714         12          0          0         96        880   c_w.l
-      2842        196          0          0          0       2612   fz_wm.l
-        20          0          0          0          0        124   m_wm.l
+      2714        192          0          0          0       2356   fz_wm.l
+       132         14          0          0          0        240   m_wm.l
 
     ----------------------------------------------------------------------
-      3588        208          0          0         96       3616   Library Totals
+      3574        218          0          0        100       3476   Library Totals
 
     ----------------------------------------------------------------------
 
@@ -2567,15 +2557,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     28840       1590       7832        488    1234728     446493   Grand Totals
-     28840       1590       7832        124    1234728     446493   ELF Image Totals (compressed)
-     28840       1590       7832        124          0          0   ROM Totals
+     25952       1534       7832        488    1235392     442598   Grand Totals
+     25952       1534       7832        132    1235392     442598   ELF Image Totals (compressed)
+     25952       1534       7832        132          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                36672 (  35.81kB)
-    Total RW  Size (RW Data + ZI Data)           1235216 (1206.27kB)
-    Total ROM Size (Code + RO Data + RW Data)      36796 (  35.93kB)
+    Total RO  Size (Code + RO Data)                33784 (  32.99kB)
+    Total RW  Size (RW Data + ZI Data)           1235880 (1206.91kB)
+    Total ROM Size (Code + RO Data + RW Data)      33916 (  33.12kB)
 
 ==============================================================================
 
