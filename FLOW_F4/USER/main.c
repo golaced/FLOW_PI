@@ -269,7 +269,7 @@ void rgb565_test(void)
   OV5640_Special_Effects(Effect);
 	OV5640_Contrast(Contract);		//对比度0
 	OV5640_Sharpness(Shape);	//自动锐度
-	//OV5640_Focus_Constant();//启动持续对焦
+	//
 	My_DCMI_Init();			//DCMI配置
 	DCMI_DMA_Init((u32)&jpeg_buf,jpeg_buf_size,DMA_MemoryDataSize_Word,DMA_MemoryInc_Enable);//DCMI DMA配置  
  	//OV5640_ImageWin_Set(4,0,64,64);				//全尺寸缩放
@@ -283,6 +283,7 @@ void rgb565_test(void)
 	//OV5640_Focus_Single	();
 	///en_guass=0;  
 	//en_hist_filter=1; 
+	OV5640_Focus_Constant();//启动持续对焦
 while(1)
 	{ static float t_mpu,t_focus;
 		float dt= Get_Cycle_T(4)/1000000.0f;								//???????????	
@@ -290,7 +291,7 @@ while(1)
     t_focus+=dt;
 		
     if(t_focus>6&&1){t_focus=0;
-		OV5640_Focus_Single	();
+		//OV5640_Focus_Single	();
 		}		
 		if(t_mpu>0.015){
 //		MPU6050_Read();
@@ -376,8 +377,8 @@ while(1)
 						    	0*10,0*10,0*10,0,0,0,0);	
 									break;
 									case 1:
-							  data_per_uart1(0*100,pixel_flow_x_klt*100,pixel_flow_x_sad*100,													 
-								0*100,pixel_flow_y_klt*100,pixel_flow_y_sad*100,				//flow.integrated_x*100,1*flow.integrated_xgyro*100,0*flow.h_x_pix*100,															
+							  data_per_uart1(0*100,pixel_flow_x_klt*100,pixel_flow_x*100,													 
+								0*100,pixel_flow_y_klt*100,pixel_flow_y*100,				//flow.integrated_x*100,1*flow.integrated_xgyro*100,0*flow.h_x_pix*100,															
 								pixel_flow_x*100,pixel_flow_y*100,0*flow.h_y_pix*0,
 						    	0*10,0*10,0*10,0,0,0,0);	
 									break;
@@ -403,7 +404,7 @@ int main(void)
 	Cycle_Time_Init();
 	//uart_init(576000);		//初始化串口波特率为115200
 	uart_init2(115200);		//初始化串口波特率为115200
-	uart_init2(576000);		//初始化串口波特率为115200
+//	uart_init2(576000);		//初始化串口波特率为115200
 	LED_Init();					//初始化LED 
  	KEY_Init();					//按键初始化 
 	delay_ms(10);

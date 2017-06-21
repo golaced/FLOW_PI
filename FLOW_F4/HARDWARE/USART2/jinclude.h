@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #define EN_JPG 1
+#define EN_JPG_BUF 0
 /* define basic type 
  */
 typedef int   INT32;

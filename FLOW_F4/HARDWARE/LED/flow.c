@@ -29,7 +29,7 @@ u8 en_gro_filter=0;
 #define  NUM_BLOCKS_KLT	6//3 8 x & y number of tiles to check  6
 //this are the settings for KLT based flow
 #define PYR_LVLS 1
-#define HALF_PATCH_SIZE 4       //this is half the wanted patch size minus 1  6
+#define HALF_PATCH_SIZE 3       //this is half the wanted patch size minus 1  6
 #define PATCH_SIZE (HALF_PATCH_SIZE*2+1)
 u8 meancount_set_klt=1;
 u8 max_iter=5;
@@ -1769,13 +1769,15 @@ u8 flow_task(uint8_t * current_image,uint8_t * previous_image ,uint8_t * current
 	#else
 	qual[1] =check_for_frame(previous_image, current_image, 0, 0,0, &tempx1, &tempy1 );
 	#endif
-	pixel_flow_x=pixel_flow_x_klt=k_klt*1*firstOrderFilter(	tempx1 ,&firstOrderFilters[ACC_LOWPASS_X],get_time_between_images);
+	pixel_flow_x=pixel_flow_x_klt=k_klt*1.3*firstOrderFilter(	tempx1 ,&firstOrderFilters[ACC_LOWPASS_X],get_time_between_images);
 	pixel_flow_y=pixel_flow_y_klt=k_klt*1*firstOrderFilter(	tempy1 ,&firstOrderFilters[ACC_LOWPASS_Y],get_time_between_images);
-	
+
 #endif	
 	
-//	pixel_flow_x=(float)qual[0]/255*k_sad*pixel_flow_x_sad+(1-k_sad*(float)qual[0]/255)*pixel_flow_x_klt;
-//	pixel_flow_y=(float)qual[0]/255*k_sad*pixel_flow_y_sad+(1-k_sad*(float)qual[0]/255)*pixel_flow_y_klt;
+
+	pixel_flow_x*=2.0/Frame_size;
+	pixel_flow_y*=2.0/Frame_size;
+	
 return	qual[0]/2+qual[1]/2;
 }
 

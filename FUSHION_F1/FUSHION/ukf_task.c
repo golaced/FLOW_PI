@@ -106,7 +106,7 @@ double P_KF_NAV[3][9];
 float ga_nav= 0.1; 
 float gwa_nav=0.1;
 float g_pos_flow= 0.0086;//0.0051;
-float g_spd_flow= 0.001;//2.00000011e-005;//0.0006;
+float g_spd_flow= 0.0005;//2.00000011e-005;//0.0006;
 
 float K_pos_qr=0.01;
 float K_spd_flow=0.86;//1.2;//0.86;
@@ -169,7 +169,7 @@ u8 kf_data_sel_temp=kf_data_sel;
    }else if(circle.check&&circle.connect)		
 	 Posz=(float)circle.z/100.-qr_z_off;
 	 float Accz=acc_flt[2];	 
-   double Zz[3]={LIMIT(Posz,0.05,10)+LIMIT(X_ukf_baro[1]*T*10,-2,2),0,Accz};
+   float Zz[3]={LIMIT(Posz,0.05,10)+LIMIT(X_ukf_baro[1]*T*10,-2,2),0,Accz};
 	 u8 flag_hight[3]={1,0,1};
 	 if(fabs(X_ukf_baro[0]-Posz)>0.5&&ultra_distance<4000)
 	 {X_KF1_NAV_Z[0]=state_correct_z[0]=Posz;X_KF1_NAV_Z[1]=X_KF1_NAV_Z[2]=state_correct_z[1]=state_correct_z[2]=state_correct_z[3]=state_correct_z[4]=state_correct_z[5]=0;}
@@ -224,8 +224,7 @@ if(kf_data_sel_temp==1){
    OLDX_KF2(Zy,r_sensor_flow[3], r_sensor_flow, flag,X_KF1_NAV_Y, state_correct_y, T);
 	 X_KF_NAV[0][0]=X_KF1_NAV_X[0];X_KF_NAV[0][1]=X_KF1_NAV_X[1];
 	 X_KF_NAV[1][0]=X_KF1_NAV_Y[0];X_KF_NAV[1][1]=X_KF1_NAV_Y[1];
-	 
-	 
+
    X_ukf[0]=X_KF_NAV[0][0]+X_ukf[2]*T*10;//East pos
 	 //X_ukf[1]=X_KF_NAV[0][1];//East vel
 	 X_ukf[2]=X_KF_NAV[0][2];
@@ -263,7 +262,7 @@ else if(kf_data_sel_temp==2){//---------------------flow in global--------------
 //	 if(par[2]!=0)K_spd_flow=(float)par[2]/1000.;
 	 velNorth=SPDY*cos(Yaw_qr*0.0173)-SPDX*sin(Yaw_qr*0.0173);
    velEast=SPDY*sin(Yaw_qr*0.0173)+SPDX*cos(Yaw_qr*0.0173);
-	 if(circle.check==0&&circle.connect)
+	 if(!circle.check&&circle.connect)
 	 H[0]=0; 
 	 static float pos_reg[2];
    Qr_y=-circle.y;
@@ -289,16 +288,16 @@ else if(kf_data_sel_temp==2){//---------------------flow in global--------------
 				state_init_flow_pos=0;
 			break; 
 	 }
-	 double Zy[3]={Posy,Sdpy,acc_bias[1]};
+	 float Zy[3]={Posy,Sdpy,acc_bias[1]};
 	 if(1)//bei 
    KF_OLDX_NAV( X_KF_NAV[1],  P_KF_NAV[1],  Zy,  Accy, A,  B,  H,  ga_nav,  gwa_nav, g_pos_flow,  g_spd_flow,  T);
-	 double Zx[3]={Posx,Sdpx,acc_bias[0]};
+	 float Zx[3]={Posx,Sdpx,acc_bias[0]};
 	 if(1)//dong
    KF_OLDX_NAV( X_KF_NAV[0],  P_KF_NAV[0],  Zx,  Accx, A,  B,  H,  ga_nav,  gwa_nav, g_pos_flow,  g_spd_flow,  T);
-	 X_ukf[0]=X_KF_NAV[0][0]+X_ukf[2]*T*15;//East pos
+	 X_ukf[0]=X_KF_NAV[0][0]+X_ukf[2]*T*0;//East pos
 	 //X_ukf[1]=X_KF_NAV[0][1];//East vel
 	 X_ukf[2]=X_KF_NAV[0][2];
-	 X_ukf[3]=X_KF_NAV[1][0]+X_ukf[5]*T*15;//North  pos
+	 X_ukf[3]=X_KF_NAV[1][0]+X_ukf[5]*T*0;//North  pos
 	 //X_ukf[4]=X_KF_NAV[1][1];//North  vel
 	 X_ukf[5]=X_KF_NAV[1][2];							
 	 X_ukf[1]=-X_KF_NAV[1][1]*sin(Yaw_qr*0.0173)+X_KF_NAV[0][1]*cos(Yaw_qr*0.0173);//X
@@ -321,12 +320,12 @@ else if(kf_data_sel_temp==2){//---------------------flow in global--------------
    Posx=Qr_x*K_pos_qr;
 	 Sdpx=flowx*K_spd_flow;
 	 Accx=accx*acc_flag_flow[0];
-	 double Zx[3]={Posx,Sdpx,0};
+	 float Zx[3]={Posx,Sdpx,0};
    KF_OLDX_NAV( X_KF_NAV[0],  P_KF_NAV[0],  Zx,  Accx, A,  B,  H,  ga_nav,  gwa_nav, g_pos_flow,  g_spd_flow,  T);
 	 Posy=Qr_y*K_pos_qr;
    Sdpy=flowy*K_spd_flow;
 	 Accy=accy*acc_flag_flow[1];
-	 double Zy[3]={Posy,Sdpy,0};
+	 float Zy[3]={Posy,Sdpy,0};
    KF_OLDX_NAV( X_KF_NAV[1],  P_KF_NAV[1],  Zy,  Accy, A,  B,  H,  ga_nav,  gwa_nav, g_pos_flow,  g_spd_flow,  T);
 	 X_ukf[0]=X_KF_NAV[0][0];
 	 X_ukf[1]=X_KF_NAV[0][1];

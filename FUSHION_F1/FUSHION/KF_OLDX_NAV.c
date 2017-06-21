@@ -172,7 +172,7 @@ static double rt_powd_snf(double u0, double u1)
  *                double T
  * Return Type  : void
  */
-void KF_OLDX_NAV(double X[3], double P[9], const double Z[3], double U, const
+void KF_OLDX_NAV(double X[3], double P[9], const float Z[3], double U, const
                  double A[9], const double B[3], const double H[9], double ga,
                  double gwa, double g_pos, double g_spd, double T)
 {

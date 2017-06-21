@@ -17,7 +17,7 @@
 #include "KF_OLDX_NAV_types.h"
 
 /* Function Declarations */
-extern void KF_OLDX_NAV(double X[3], double P[9], const double Z[3], double U,
+extern void KF_OLDX_NAV(double X[3], double P[9], const float Z[3], double U,
   const double A[9], const double B[3], const double H[9], double ga, double gwa,
   double g_pos, double g_spd, double T);
 extern void KF_OLDX_NAV_initialize(void);

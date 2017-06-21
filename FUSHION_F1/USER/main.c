@@ -27,7 +27,7 @@ void SetPB9(u8 sta)
 
 float acc_flt[3];
 float flow_flt[3];
-float k_flow=0.35;
+float k_flow=0.45;
 float yaw_qr_off;
 float flow_h;	
 u8 debug1=0;
@@ -171,8 +171,8 @@ int main(void)
 					if(debug1||end_ble)
 					data_per_uart(
 					0,flowx*1000,X_ukf[1]*1000,
-					0,flowy*1000,X_ukf[4]*1000,
-					X_ukf_baro[0]*100, circle.z,ultra_distance/10,
+					X_ukf[3]*100,flowy*1000,X_ukf[4]*1000,
+					X_ukf[0]*100, circle.x,-circle.y,
 					(int16_t)(Yaw*10),(int16_t)(Pitch*10.0),(int16_t)(Roll*10.0),0,circle.check&&circle.connect,circle.check&&circle.connect,0);
          
 					

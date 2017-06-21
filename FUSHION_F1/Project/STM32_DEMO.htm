@@ -3,9 +3,9 @@
 <title>Static Call Graph - [.\STM32_DEMO.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\STM32_DEMO.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060183: Last Updated: Mon Jun 19 16:12:38 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060183: Last Updated: Tue Jun 20 20:05:52 2017
 <BR><P>
-<H3>Maximum Stack Usage =       1496 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =       1456 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 __rt_entry_main &rArr; main &rArr; ukf_pos_task_qr &rArr; KF_OLDX_NAV &rArr; rt_powd_snf &rArr; pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
 <P>
@@ -192,7 +192,7 @@ Global Symbols
 <P><STRONG><a name="[13c]"></a>__rt_entry_postsh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$00000009))
 
 <P><STRONG><a name="[42]"></a>__rt_entry_main</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$0000000D))
-<BR><BR>[Stack]<UL><LI>Max Depth = 1496 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 1456 + Unknown Stack Size
 <LI>Call Chain = __rt_entry_main &rArr; main &rArr; ukf_pos_task_qr &rArr; KF_OLDX_NAV &rArr; rt_powd_snf &rArr; pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -474,7 +474,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MYDMA_Enable
 </UL>
 
-<P><STRONG><a name="[51]"></a>Data_Receive_Anl1</STRONG> (Thumb, 812 bytes, Stack size 32 bytes, usart.o(i.Data_Receive_Anl1))
+<P><STRONG><a name="[51]"></a>Data_Receive_Anl1</STRONG> (Thumb, 832 bytes, Stack size 32 bytes, usart.o(i.Data_Receive_Anl1))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = Data_Receive_Anl1 &rArr; SetPB9 &rArr; GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;To_180_degrees
@@ -782,10 +782,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[84]"></a>KF_OLDX_NAV</STRONG> (Thumb, 2310 bytes, Stack size 632 bytes, kf_oldx_nav.o(i.KF_OLDX_NAV))
+<P><STRONG><a name="[84]"></a>KF_OLDX_NAV</STRONG> (Thumb, 2308 bytes, Stack size 632 bytes, kf_oldx_nav.o(i.KF_OLDX_NAV))
 <BR><BR>[Stack]<UL><LI>Max Depth = 880<LI>Call Chain = KF_OLDX_NAV &rArr; rt_powd_snf &rArr; pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
+<BR>[Calls]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2d
 <LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dsub
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
@@ -1561,8 +1562,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[14]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI1_IRQHandler
 </UL>
 
-<P><STRONG><a name="[43]"></a>main</STRONG> (Thumb, 2562 bytes, Stack size 88 bytes, main.o(i.main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 1496<LI>Call Chain = main &rArr; ukf_pos_task_qr &rArr; KF_OLDX_NAV &rArr; rt_powd_snf &rArr; pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
+<P><STRONG><a name="[43]"></a>main</STRONG> (Thumb, 2572 bytes, Stack size 88 bytes, main.o(i.main))
+<BR><BR>[Stack]<UL><LI>Max Depth = 1456<LI>Call Chain = main &rArr; ukf_pos_task_qr &rArr; KF_OLDX_NAV &rArr; rt_powd_snf &rArr; pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ukf_pos_task_qr
 <LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;firstOrderFilter
@@ -1722,8 +1723,8 @@ Global Symbols
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_powd_snf
 </UL>
 
-<P><STRONG><a name="[ea]"></a>ukf_pos_task_qr</STRONG> (Thumb, 5304 bytes, Stack size 528 bytes, ukf_task.o(i.ukf_pos_task_qr))
-<BR><BR>[Stack]<UL><LI>Max Depth = 1408<LI>Call Chain = ukf_pos_task_qr &rArr; KF_OLDX_NAV &rArr; rt_powd_snf &rArr; pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
+<P><STRONG><a name="[ea]"></a>ukf_pos_task_qr</STRONG> (Thumb, 5230 bytes, Stack size 488 bytes, ukf_task.o(i.ukf_pos_task_qr))
+<BR><BR>[Stack]<UL><LI>Max Depth = 1368<LI>Call Chain = ukf_pos_task_qr &rArr; KF_OLDX_NAV &rArr; rt_powd_snf &rArr; pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;To_180_degrees
 <LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sin
@@ -1994,6 +1995,7 @@ Global Symbols
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMUupdate
 <LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[14]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI1_IRQHandler
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KF_OLDX_NAV
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLDX_KF2
 </UL>
 

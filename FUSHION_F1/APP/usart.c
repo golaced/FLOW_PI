@@ -151,6 +151,8 @@ void Data_Receive_Anl1(u8 *data_buf,u8 num)
 	circle.x=(int16_t)((*(data_buf+5)<<8)|*(data_buf+6));
 	circle.y=(int16_t)((*(data_buf+7)<<8)|*(data_buf+8));
 	circle.z=(int16_t)((*(data_buf+9)<<8)|*(data_buf+10));
+	if(circle.x!=0||circle.y!=0||circle.z!=0)	
+		circle.check=1;
 	circle.pit=(int16_t)((*(data_buf+11)<<8)|*(data_buf+12));
 	circle.rol=(int16_t)((*(data_buf+13)<<8)|*(data_buf+14));
 	circle.yaw=To_180_degrees((int16_t)((*(data_buf+15)<<8)|*(data_buf+16))-off_yaw-circle.yaw_off);	

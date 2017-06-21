@@ -14,7 +14,11 @@ void jpeg_finish_compress (jpeg_compress_info *cinfo);
 
 void jpeg_write_scanline  (jpeg_compress_info *cinfo, JSAMPLE *samp_row);
 void Compression(int width,int height,float quality) ;
+#if EN_JPG_BUF
 #define JUGG_BUF (int)(64*64*2*1.4)
+#else
+#define JUGG_BUF (int)(2)
+#endif
 #define IN_BUF JUGG_BUF
 extern unsigned char JPG_enc_buf[JUGG_BUF];//jpeg Êä³ö
 extern void RGB565TORGB24(u32 num,u16 Pixel);

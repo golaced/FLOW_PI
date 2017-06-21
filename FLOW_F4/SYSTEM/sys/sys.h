@@ -18,9 +18,13 @@
 ////////////////////////////////////////////////////////////////////////////////// 
 #include "jinclude.h"
 #if EN_JPG
-#define Frame_size 2
+	#if EN_JPG_BUF
+	#define Frame_size 2
+	#else
+	#define Frame_size 2.5
+	#endif
 #else
-#define Frame_size 2.8
+#define Frame_size 2.6
 #endif
 #define USE_FPS60 1
 extern double X_kf_baro[3], P_kf_baro[9];
