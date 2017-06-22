@@ -187,6 +187,43 @@ void simple_3d_trans(_xyz_f_t *ref, _xyz_f_t *in, _xyz_f_t *out) //小范围内�
 }
 
 
+void flow_filter_oldx(int *in,int* out,float* rate,u8 size)
+{
+u8 i;	
+u8 num_z=0,num_f=0,num_0=0;	
+int sum_z=0,sum_f=0,sum_all=0;
+	for(i=0;i<size;i++)
+   { sum_all+=*(in+i);
+	   if(*(in+i)>0)
+		 {sum_z+=*(in+i);num_z++;}
+	   if(*(in+i)==0)
+	    num_0++;
+		 if(*(in+i)<0)
+	    {sum_f+=*(in+i);num_f++;}
+	 }
+    if(num_z>0)
+			sum_z/=num_z;
+		if(num_f>0)
+			sum_f/=num_f;
+		if(num_0<size)
+			sum_all/=size;
+		
+		
+	if(num_0>rate[0]*size)
+		  *out=0; 
+  else	 
+	{	
+		if(num_z-num_f>(size-num_0)*rate[1])
+			 *out=sum_z;
+		else 	if(num_f-num_z>(size-num_0)*rate[1])
+			 *out=sum_f;
+		else
+			 *out=sum_f*num_f/(num_f+num_z)+sum_z*num_z/(num_f+num_z);
+	}
+  
+		
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 // TAU = Filter Time Constant

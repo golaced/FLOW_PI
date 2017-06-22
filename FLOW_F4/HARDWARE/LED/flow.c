@@ -31,7 +31,9 @@ u8 en_gro_filter=0;
 #define PYR_LVLS 1
 #define HALF_PATCH_SIZE 3       //this is half the wanted patch size minus 1  6
 #define PATCH_SIZE (HALF_PATCH_SIZE*2+1)
-u8 meancount_set_klt=1;
+u8 meancount_set_klt=6;
+u8 en_hist_filter_klt=1;
+u16 meancount_klt_view;
 u8 max_iter=5;
 float k_klt=2.5;
 #if USE_30FPS
@@ -987,6 +989,8 @@ u8 meancount_v_klt;
  */
 //??????????????
 //Kanade-Lucas-Tomasi(KLT)
+ int x_buf[NUM_BLOCKS_KLT*NUM_BLOCKS_KLT],y_buf[NUM_BLOCKS_KLT*NUM_BLOCKS_KLT];
+ float rate_fliter_klt[2]={0.618,1-0.618};
 uint8_t compute_klt(uint8_t *image1, uint8_t *image2, float x_rate, float y_rate, float z_rate, float *pixel_flow_x, float *pixel_flow_y)
 {
   /* variables */
@@ -1253,18 +1257,28 @@ uint8_t compute_klt(uint8_t *image1, uint8_t *image2, float x_rate, float y_rate
           {
             meanflowx += nx;
             meanflowy += ny;
+						x_buf[meancount]=nx*100;
+						y_buf[meancount]=ny*100;
             meancount++;
           }
         }
     }
   }
-
+  meancount_klt_view=meancount;
   /* evaluate flow calculation */
   if (meancount > 0)
   {
+		if(en_hist_filter_klt)
+		{
+		 int temp_x,temp_y;
+			flow_filter_oldx(x_buf,&temp_x,rate_fliter_klt,NUM_BLOCKS_KLT*NUM_BLOCKS_KLT);
+		  flow_filter_oldx(y_buf,&temp_y,rate_fliter_klt,NUM_BLOCKS_KLT*NUM_BLOCKS_KLT);
+			meanflowx=(float)temp_x/200.;
+		  meanflowy=(float)temp_y/200.;
+		}else{	
     meanflowx /= meancount;
     meanflowy /= meancount;
-
+    }
   *pixel_flow_x = -meanflowx;
   *pixel_flow_y = -meanflowy;
 }

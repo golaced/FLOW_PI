@@ -283,6 +283,7 @@ void rgb565_test(void)
 	//OV5640_Focus_Single	();
 	///en_guass=0;  
 	//en_hist_filter=1; 
+	//delay_ms(20);
 	OV5640_Focus_Constant();//启动持续对焦
 while(1)
 	{ static float t_mpu,t_focus;
@@ -393,7 +394,15 @@ while(1)
 	}
 	}       
 } 
-	
+u8 mcuID[3];
+void cpuidGetId(void)
+{
+    mcuID[0] = *(__IO u32*)(0x1FFF7A10);
+    mcuID[1] = *(__IO u32*)(0x1FFF7A14);
+    mcuID[2] = *(__IO u32*)(0x1FFF7A18);
+}
+
+
 int main(void)
 { 
 	u8 key;
@@ -402,9 +411,12 @@ int main(void)
 	delay_init(168);  //初始化延时函数
 	Initial_Timer5();
 	Cycle_Time_Init();
+	cpuidGetId();
 	//uart_init(576000);		//初始化串口波特率为115200
+	if(mcuID[0]==47&&mcuID[1]==13&&mcuID[2]==49)
 	uart_init2(115200);		//初始化串口波特率为115200
-//	uart_init2(576000);		//初始化串口波特率为115200
+	else
+	uart_init2(576000);		//初始化串口波特率为115200
 	LED_Init();					//初始化LED 
  	KEY_Init();					//按键初始化 
 	delay_ms(10);

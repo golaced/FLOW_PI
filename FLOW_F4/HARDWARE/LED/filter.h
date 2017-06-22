@@ -22,7 +22,7 @@ float Moving_Median(u8 item,u8 width_num,float in);
 #define _xyz_f_t xyz_f_t
 void simple_3d_trans(_xyz_f_t *ref, _xyz_f_t *in, _xyz_f_t *out);
 double IIR_I_Filter(double InData, double *x, double *y, double *b, short nb, double *a, short na);
-
+void flow_filter_oldx(int *in,int* out,float *rate,u8 size);
 
 #define NUMBER_OF_FIRST_ORDER_FILTERS 20
 #define ACC_LOWPASS_X 0
