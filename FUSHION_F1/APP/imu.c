@@ -14,7 +14,7 @@ xyz_f_t reference_v;
 ref_t 	ref;
 //xyz_f_t Gravity_Vec;  				//解算的重力向量
 	
-float Roll,Pitch,Yaw,Roll_mid_down,Pitch_mid_down,Yaw_mid_down,Rol_fc,Pit_fc,Yaw_fc;    				//姿态角
+float Roll,Pitch,Yaw,Roll_mid_down,Pitch_mid_down,Yaw_mid_down,Rol_fc,Pit_fc;    				//姿态角
 
 float ref_q[4] = {1,0,0,0},q_nav[4],ref_q_imd_down[4];
 float norm_acc,norm_q;

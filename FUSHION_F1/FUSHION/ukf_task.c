@@ -106,7 +106,7 @@ double P_KF_NAV[3][9];
 float ga_nav= 0.1; 
 float gwa_nav=0.1;
 float g_pos_flow= 0.0086;//0.0051;
-float g_spd_flow= 0.0005;//2.00000011e-005;//0.0006;
+float g_spd_flow= 0.005;//2.00000011e-005;//0.0006;
 
 float K_pos_qr=0.01;
 float K_spd_flow=0.86;//1.2;//0.86;
@@ -123,6 +123,8 @@ u8 force_test;
 float Posx,Posy;
 float r_sensor_flow[4]={0.03,0.05,0.02,2.68};
 float r_sensor_hight[4]={0.015,0.05,0.02,4};
+
+float ALT_POS_SONAR;
 void ukf_pos_task_qr(float Qr_x,float Qr_y,float Yaw,float flowx,float flowy,float accx,float accy,float T)
 {
 	
@@ -141,6 +143,7 @@ if(!kf_init){
 state_correct_x[0]=state_correct_x[1]=state_correct_x[2]=0;
 state_correct_y[0]=state_correct_y[1]=state_correct_y[2]=0;	
 }
+
 double A[9]=
 			 {1,       0,    0,
 				T,       1,    0,
@@ -148,19 +151,20 @@ double A[9]=
 
 double B[3]={T*T/2,T,0}; 
 double H[9]={
-			 1,0,0,
+			 0,0,0,
        0,1,0,
        0,0,0}; 
 double H1[9]={
 			 1,0,0,
        0,0,0,
        0,0,0}; 
-
+if(sonic_fc!=0)
+ultra_distance=sonic_fc;
 u8 kf_data_sel_temp=kf_data_sel; 
 // kf_data_sel_temp=0;
 	 float Posz;
 	 if(ultra_distance<4000){
-	 if(circle.check&&circle.connect)		
+	 if(circle.check==1&&circle.connect)		
    {
 	 qr_z_off=(float)circle.z/100.-(float)ultra_distance/1000.;
 	 Posz=(float)circle.z/100.-qr_z_off; 
@@ -168,13 +172,15 @@ u8 kf_data_sel_temp=kf_data_sel;
 	 Posz=(float)ultra_distance/1000.;
    }else if(circle.check&&circle.connect)		
 	 Posz=(float)circle.z/100.-qr_z_off;
+	 
+	 ALT_POS_SONAR=Posz;
 	 float Accz=acc_flt[2];	 
    float Zz[3]={LIMIT(Posz,0.05,10)+LIMIT(X_ukf_baro[1]*T*10,-2,2),0,Accz};
 	 u8 flag_hight[3]={1,0,1};
 	 if(fabs(X_ukf_baro[0]-Posz)>0.5&&ultra_distance<4000)
 	 {X_KF1_NAV_Z[0]=state_correct_z[0]=Posz;X_KF1_NAV_Z[1]=X_KF1_NAV_Z[2]=state_correct_z[1]=state_correct_z[2]=state_correct_z[3]=state_correct_z[4]=state_correct_z[5]=0;}
 	 //OLDX_KF2(Zz,r_sensor_hight[3], r_sensor_hight, flag_hight,X_KF1_NAV_Z, state_correct_z, T);
-   KF_OLDX_NAV( X_KF_NAV[2],  P_KF_NAV[2],  Zz,Accz, A,  B,  H1,  ga_nav,  gwa_nav, 0.05,  g_spd_flow,  T);
+   KF_OLDX_NAV( X_KF_NAV[2],  P_KF_NAV[2],  Zz,Accz, A,  B,  H1,  ga_nav,  gwa_nav, 0.005,  g_spd_flow,  T);
    X_ukf_baro[0]=X_KF_NAV[2][0];
 	 X_ukf_baro[1]=X_KF_NAV[2][1];
 if(kf_data_sel_temp==1){
@@ -190,8 +196,9 @@ if(kf_data_sel_temp==1){
 
 	 velNorth=SPDY*cos(Yaw_qr*0.0173)-SPDX*sin(Yaw_qr*0.0173);
    velEast=SPDY*sin(Yaw_qr*0.0173)+SPDX*cos(Yaw_qr*0.0173);
-	 if(circle.check==0&&circle.connect)
-	 H[0]=0; 
+	 if(circle.check==1&&circle.connect==1)
+	 H[0]=1; 
+	 H[4]=1;
 	 static float pos_reg[2];
    Qr_y=-circle.y;
 	 Posy=Qr_y*K_pos_qr;
@@ -205,7 +212,7 @@ if(kf_data_sel_temp==1){
 	 switch(state_init_flow_pos)
 	 {
 		 case 0:
-			  if(circle.check&&circle.connect)
+			  if(circle.check==1&&circle.connect)
 				{
 				state_init_flow_pos=1;
 				X_KF_NAV[1][0]=Posy;X_KF_NAV[0][0]=Posx;
@@ -262,8 +269,9 @@ else if(kf_data_sel_temp==2){//---------------------flow in global--------------
 //	 if(par[2]!=0)K_spd_flow=(float)par[2]/1000.;
 	 velNorth=SPDY*cos(Yaw_qr*0.0173)-SPDX*sin(Yaw_qr*0.0173);
    velEast=SPDY*sin(Yaw_qr*0.0173)+SPDX*cos(Yaw_qr*0.0173);
-	 if(!circle.check&&circle.connect)
-	 H[0]=0; 
+	 if(circle.check==1&&circle.connect==1)
+	 H[0]=1; 
+	 H[4]=1;
 	 static float pos_reg[2];
    Qr_y=-circle.y;
 	 Posy=Qr_y*K_pos_qr;
@@ -277,7 +285,7 @@ else if(kf_data_sel_temp==2){//---------------------flow in global--------------
 	 switch(state_init_flow_pos)
 	 {
 		 case 0:
-			  if(circle.check&&circle.connect)
+			  if(circle.check==1&&circle.connect)
 				{
 				state_init_flow_pos=1;
 				X_KF_NAV[1][0]=Posy;X_KF_NAV[0][0]=Posx;
@@ -303,7 +311,7 @@ else if(kf_data_sel_temp==2){//---------------------flow in global--------------
 	 X_ukf[1]=-X_KF_NAV[1][1]*sin(Yaw_qr*0.0173)+X_KF_NAV[0][1]*cos(Yaw_qr*0.0173);//X
 	 X_ukf[4]= X_KF_NAV[1][1]*cos(Yaw_qr*0.0173)+X_KF_NAV[0][1]*sin(Yaw_qr*0.0173);//Y
    if(fabs( X_ukf[0]-pos_reg[0])>1.5||fabs( X_ukf[3]-pos_reg[1])>1.5){
-		  if(circle.connect)
+		  if(circle.connect==1)
 			{X_KF_NAV[1][0]=Posy;X_KF_NAV[0][0]=Posx;}
 			else
 			{X_KF_NAV[1][0]= pos_reg[1];X_KF_NAV[0][0]= pos_reg[0];}	

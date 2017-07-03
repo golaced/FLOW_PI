@@ -284,16 +284,17 @@ void rgb565_test(void)
 	///en_guass=0;  
 	//en_hist_filter=1; 
 	//delay_ms(20);
-	OV5640_Focus_Constant();//启动持续对焦
+	//OV5640_Focus_Constant();//启动持续对焦
 while(1)
 	{ static float t_mpu,t_focus;
 		float dt= Get_Cycle_T(4)/1000000.0f;								//???????????	
     t_mpu+=dt;
     t_focus+=dt;
-		
+		#if USE_CAMERA_WITH_FOCUS
     if(t_focus>6&&1){t_focus=0;
-		//OV5640_Focus_Single	();
+		OV5640_Focus_Single	();
 		}		
+		#endif
 		if(t_mpu>0.015){
 //		MPU6050_Read();
 //		MPU6050_Data_Prepare( t_mpu );			
@@ -337,7 +338,7 @@ while(1)
 		flow.integrated_xgyro=x_rate *flow.integration_time_us/1000000.;
 		flow.integrated_ygyro=y_rate *flow.integration_time_us/1000000.;
 		flow.integrated_zgyro=z_rate *flow.integration_time_us/1000000.;
-    flow_pertreatment_oldx(&flow,0);
+    flow_pertreatment_oldx(&flow,0);//comp_grop;
 		
     lasttime = micros();
 
@@ -378,9 +379,9 @@ while(1)
 						    	0*10,0*10,0*10,0,0,0,0);	
 									break;
 									case 1:
-							  data_per_uart1(0*100,pixel_flow_x_klt*100,pixel_flow_x*100,													 
-								0*100,pixel_flow_y_klt*100,pixel_flow_y*100,				//flow.integrated_x*100,1*flow.integrated_xgyro*100,0*flow.h_x_pix*100,															
-								pixel_flow_x*100,pixel_flow_y*100,0*flow.h_y_pix*0,
+							  data_per_uart1(pixel_flow_x*100,pixel_flow_x_klt*100,pixel_flow_x_sad*100,													 
+								0*100,pixel_flow_y_klt*100,pixel_flow_y_sad*100,				//flow.integrated_x*100,1*flow.integrated_xgyro*100,0*flow.h_x_pix*100,															
+								flow.integrated_y*100,flow.integrated_ygyro*100,pixel_flow_y*100,
 						    	0*10,0*10,0*10,0,0,0,0);	
 									break;
 								}									

@@ -260,6 +260,7 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 	
 
 float flow_origin[2];
+float flow_integrated_xgyro,flow_integrated_ygyro,flow_integrated_zgyro;
 void Data_Receive_Anl2(u8 *data_buf,u8 num)
 {
 	vs16 rc_value_temp;
@@ -274,6 +275,9 @@ void Data_Receive_Anl2(u8 *data_buf,u8 num)
   { 
    flow_origin[0]=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
    flow_origin[1]=(float)((int16_t)(*(data_buf+6)<<8)|*(data_buf+7))/1000.;
+	 flow_integrated_xgyro=(float)((int16_t)(*(data_buf+8)<<8)|*(data_buf+9))/1000.;	
+	 flow_integrated_ygyro=(float)((int16_t)(*(data_buf+10)<<8)|*(data_buf+11))/1000.;	
+   flow_integrated_zgyro=(float)((int16_t)(*(data_buf+12)<<8)|*(data_buf+13))/1000.;			
 	}
 	
 }
@@ -339,7 +343,8 @@ void USART2_IRQHandler(void)                	//串口1中断服务程序
 	
 
 
-
+int sonic_fc;
+float Yaw_fc;
 float flow_k=1,flow_set_off[3]={0};
 void Data_Receive_Anl3(u8 *data_buf,u8 num)
 {
@@ -356,7 +361,9 @@ void Data_Receive_Anl3(u8 *data_buf,u8 num)
    flow_k=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
    flow_set_off[0]=(float)((int16_t)(*(data_buf+6)<<8)|*(data_buf+7))/1000.;
 	 flow_set_off[1]=(float)((int16_t)(*(data_buf+8)<<8)|*(data_buf+9))/1000.;
-	 circle.yaw_off=flow_set_off[2]=(float)((int16_t)(*(data_buf+10)<<8)|*(data_buf+11))/10.;	
+	 circle.yaw_off=flow_set_off[2]=(float)((int16_t)(*(data_buf+10)<<8)|*(data_buf+11))/10.;	//安装角度
+	 sonic_fc=(float)((int16_t)(*(data_buf+12)<<8)|*(data_buf+13));
+	 Yaw_fc=(float)((int16_t)(*(data_buf+14)<<8)|*(data_buf+15))/10.;//角度对其坐标系
 	}
 	
 }
@@ -678,13 +685,17 @@ void Send_TO_FC(void)
 	_temp = Roll*100;
 	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
 	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
-	_temp = Yaw*100;
+	_temp = circle.yaw*100;//Yaw*100;
 	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
 	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
 
   _temp = circle.connect;
 	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
 	_temp = circle.check;
+	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	
+	_temp = ALT_POS_SONAR*1000;
+	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
 	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
 	
 	SendBuff[_cnt+3] = SendBuff_cnt-_cnt-4;
@@ -727,10 +738,10 @@ void Send_TO_FC_OSENSOR(void)
 	SendBuff[SendBuff_cnt++]=0x77;//功能字
 	SendBuff[SendBuff_cnt++]=0;//数据量
 
-	_temp = flow_flt[0]*1000;
+	_temp = flowx*1000;
 	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
 	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
-	_temp = flow_flt[1]*1000;
+	_temp = flowy*1000;
 	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
 	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
 	
@@ -799,6 +810,10 @@ void Send_TO_FC_OVISON(void)
 	_temp = circle.yaw;
 	SendBuff[SendBuff_cnt++]=BYTE1(_temp);
 	SendBuff[SendBuff_cnt++]=BYTE0(_temp);
+	
+	
+	
+	
 	SendBuff[_cnt+3] = SendBuff_cnt-_cnt-4;
 
 	for( i=_cnt;i<SendBuff_cnt;i++)
@@ -867,7 +882,7 @@ void Send_TO_FLOW(void)
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
 	
-	data_to_send[_cnt+3] = _cnt-4;
+	data_to_send[3] = _cnt-4;
 
 	for( i=0;i<_cnt;i++)
 		sum += data_to_send[i];

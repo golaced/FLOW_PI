@@ -251,14 +251,14 @@ float ACC_LOWPASS_GX1      ;
 float ACC_LOWPASS_GX2      ;
 float ACC_LOWPASS_GX3      ;
 
-float BARO_LOWPASS_TAU        = 0.05f;
+float BARO_LOWPASS_TAU        = 0.01f;
 float BARO_LOWPASS_SAMPLE_TIME =0.02f;
 float BARO_LOWPASS_A        ;
 float BARO_LOWPASS_GX1      ;
 float BARO_LOWPASS_GX2      ;
 float BARO_LOWPASS_GX3      ;
 
-float FLOW_LOWPASS_TAU        = 0.03f*K_TAU;
+float FLOW_LOWPASS_TAU        = 0.01f;
 float FLOW_LOWPASS_SAMPLE_TIME =0.02f;
 float FLOW_LOWPASS_A        ;
 float FLOW_LOWPASS_GX1      ;

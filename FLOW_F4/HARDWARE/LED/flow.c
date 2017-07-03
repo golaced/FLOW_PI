@@ -4,18 +4,18 @@
 #define KLT2 0
 #define SAD2 0
 #define USE_SAD 0
-
+#define SAD_WITH_KLT 1
 #define FRAME_SIZE	64
 
-
-#define SEARCH_SIZE 8//	4*2 ;// maximum offset to search: 4 + 1/2 pixels
-#define NUM_BLOCKS	8//5*2 ;// x & y number of tiles to check
-#define TILE_SIZE	SEARCH_SIZE*2//8*2;  
+//k_sad
+#define SEARCH_SIZE 10//	4*2 ;// maximum offset to search: 4 + 1/2 pixels
+#define NUM_BLOCKS	5//8//5*2 ;// x & y number of tiles to check
+#define TILE_SIZE	8//SEARCH_SIZE*2//8*2;  
 u16 PARAM_BOTTOM_FLOW_FEATURE_THRESHOLD=10;//14;//100;
 u16 PARAM_BOTTOM_FLOW_VALUE_THRESHOLD=3500;//5000;
 float PARAM_GYRO_COMPENSATION_THRESHOLD=0.1;
 
-int CORNER_THRE = 10;
+int CORNER_THRE = 15;
 int SAD_THRE = 3000;
 int SEARCH_SIZE1 = 8;        // 8 maximum offset to search: 4 + 1/2 pixels  (better do not bigger than 8)
 int NUM_BLOCKS1 = 5;         // 5 do not bigger than 8 ,do not less than 4
@@ -29,11 +29,12 @@ u8 en_gro_filter=0;
 #define  NUM_BLOCKS_KLT	6//3 8 x & y number of tiles to check  6
 //this are the settings for KLT based flow
 #define PYR_LVLS 1
-#define HALF_PATCH_SIZE 3       //this is half the wanted patch size minus 1  6
+#define HALF_PATCH_SIZE 4       //this is half the wanted patch size minus 1  6
 #define PATCH_SIZE (HALF_PATCH_SIZE*2+1)
 u8 meancount_set_klt=6;
-u8 en_hist_filter_klt=1;
+u8 en_hist_filter_klt=0;
 u16 meancount_klt_view;
+float k_sad=1;//0.76;
 u8 max_iter=5;
 float k_klt=2.5;
 #if USE_30FPS
@@ -1273,8 +1274,8 @@ uint8_t compute_klt(uint8_t *image1, uint8_t *image2, float x_rate, float y_rate
 		 int temp_x,temp_y;
 			flow_filter_oldx(x_buf,&temp_x,rate_fliter_klt,NUM_BLOCKS_KLT*NUM_BLOCKS_KLT);
 		  flow_filter_oldx(y_buf,&temp_y,rate_fliter_klt,NUM_BLOCKS_KLT*NUM_BLOCKS_KLT);
-			meanflowx=(float)temp_x/200.;
-		  meanflowy=(float)temp_y/200.;
+			meanflowx=(float)temp_x/100.*0.8;
+		  meanflowy=(float)temp_y/100.*0.8;
 		}else{	
     meanflowx /= meancount;
     meanflowy /= meancount;
@@ -1740,7 +1741,7 @@ int px_x,px_y;
 int new_x,  new_y;
 u8 en_klt=1;
 u8 qual[2];
-float k_sad=0.76;
+
 
 u8 flow_task(uint8_t * current_image,uint8_t * previous_image ,uint8_t * current_imaget,uint8_t * previous_imaget ,float get_time_between_images)
 {
@@ -1778,14 +1779,30 @@ u8 flow_task(uint8_t * current_image,uint8_t * previous_image ,uint8_t * current
 	int status;
 	int px,py,nx,ny;
 	//opticFlowLK(previous_image, current_image, &px,&py, 50,0,0,&nx,&ny,  &status, 8, 5);
-
 	qual[1] = compute_klt(previous_image, current_image, 0, 0,0, &tempx1, &tempy1 );
 	#else
 	qual[1] =check_for_frame(previous_image, current_image, 0, 0,0, &tempx1, &tempy1 );
 	#endif
-	pixel_flow_x=pixel_flow_x_klt=k_klt*1.3*firstOrderFilter(	tempx1 ,&firstOrderFilters[ACC_LOWPASS_X],get_time_between_images);
-	pixel_flow_y=pixel_flow_y_klt=k_klt*1*firstOrderFilter(	tempy1 ,&firstOrderFilters[ACC_LOWPASS_Y],get_time_between_images);
+	#if SAD_WITH_KLT
+		#if SAD2
+		qual[0] = compute_flow1(previous_image, current_image, &tempx, &tempy );
+		#else
+		qual[0] = compute_flow(previous_image, current_image, 0, 0,0, &tempx, &tempy , get_time_between_images);
+		#endif
+		pixel_flow_x_sad=k_sad*1.3*firstOrderFilter(	tempx ,&firstOrderFilters[FLOW_LOWPASS_X],get_time_between_images);
+		pixel_flow_y_sad=k_sad*firstOrderFilter(	tempy ,&firstOrderFilters[FLOW_LOWPASS_Y],get_time_between_images);
+	#endif
+	pixel_flow_x_klt=k_klt*1.3*firstOrderFilter(	tempx1 ,&firstOrderFilters[ACC_LOWPASS_X],get_time_between_images);
+	pixel_flow_y_klt=k_klt*1*firstOrderFilter(	tempy1 ,&firstOrderFilters[ACC_LOWPASS_Y],get_time_between_images);
 
+  if(fabs(pixel_flow_x_sad)>fabs(pixel_flow_x_klt))
+		pixel_flow_x=Moving_Median(0,5,pixel_flow_x_sad);
+	else
+		pixel_flow_x=Moving_Median(0,5,pixel_flow_x_klt);
+	if(fabs(pixel_flow_y_sad)>fabs(pixel_flow_y_klt))
+		pixel_flow_y=Moving_Median(1,5,pixel_flow_y_sad);
+	else
+		pixel_flow_y=Moving_Median(1,5,pixel_flow_y_klt);
 #endif	
 	
 

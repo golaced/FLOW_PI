@@ -19,7 +19,7 @@
 #define RAD_TO_DEG		(180.0f / M_PI)
 #define DEG_TO_RAD		(M_PI / 180.0f)
 
-extern float K_spd_flow;
+extern float K_spd_flow,ALT_POS_SONAR;
 extern  double X_ukf[6],X_ukf_nav[9],X_ukf_all[9],X_ukf_baro[6];;
 extern double X_KF_NAV[3][3];
 extern float X_ukf_Pos[2];

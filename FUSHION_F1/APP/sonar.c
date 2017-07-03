@@ -113,13 +113,13 @@ void EXTI1_IRQHandler(void)
 				 {  
 				temp1=LIMIT(Roll,-45,45);
 				temp2=LIMIT(Pitch,-45,45);
-				temp=(float)cnt_sample1*1000/(TEMP_SONAR)*cos(temp1*0.017)*cos(temp2*0.017);
-				temp=((temp)<(0)?(0):((temp)>(4500)?(4500):(temp)));
+				temp=(float)cnt_sample1*1000/(TEMP_SONAR);//*cos(temp1*0.017)*cos(temp2*0.017);
+			  if(temp>4000)temp=4000;
 				ultra_distance=insert_sonar_value_and_get_mode_value(temp);//Moving_Median(1,5,temp);
 				ultra_start_f = 0;
 				state_dj_rx[3]=0;
 		    ultra_ok = 1;
-				T_sonar=Get_Cycle_T(4);
+				//T_sonar=Get_Cycle_T(4);
 				//ultra_delta = (ultra_distance - ultra_distance_old)/LIMIT(T_sonar,0.000000001,1);
 				//sonar_filter((float) temp/1000,T_sonar);
 				//ultra_distance_old = ultra_distance;

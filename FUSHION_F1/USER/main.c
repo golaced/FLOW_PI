@@ -37,6 +37,9 @@ float accy;//=acc_flt[1]*cos(circle.yaw_off*0.0173)-acc_flt[0]*sin(circle.yaw_of
 
 float flowx;//=flow_flt[1]*sin(circle.yaw_off*0.0173)+flow_flt[0]*cos(circle.yaw_off*0.0173);
 float flowy;//=flow_flt[1]*cos(circle.yaw_off*0.0173)-flow_flt[0]*sin(circle.yaw_off*0.0173);	
+
+float xgyro;
+float ygyro;
 int main(void)
 {static u8 cnt[10];
 		//--------------------------- CLK INIT, HSE PLL ----------------------------
@@ -82,7 +85,7 @@ int main(void)
 		UART_PI_CONFIG(115200);
 		UART_FLOW_CONFIG(115200);
 		UART_FLOW_CONFIG(576000);
-		if(end_ble)
+		if(end_ble)//up link
 		UART_UP_CONFIG(576000);	
 		else
 		UART_UP_CONFIG(115200);
@@ -101,22 +104,29 @@ int main(void)
 		MPU6050_Read(); 															
 	  MPU6050_Data_Prepare( dt_mems );			
 		
-			
+		float Yaw_r;	
 		//imu
     if(cnt[0]++>1){cnt[0]=0;		
 		dt_imu=(float)Get_Cycle_T(1)/1000000.;		
 		IMUupdate(0.5f *dt_imu,mpu6050_fc.Gyro_deg.x, mpu6050_fc.Gyro_deg.y, mpu6050_fc.Gyro_deg.z, 
 			mpu6050_fc.Acc.x, mpu6050_fc.Acc.y, mpu6050_fc.Acc.z,
 	    0,0,0,
-			&Roll,&Pitch,&Yaw);
+			&Roll,&Pitch,&Yaw_r);
 		}
+		static u8 Yaw_close=0;
+		if(Yaw_fc>0)
+			Yaw_close=1;
+		if(!Yaw_close)
+			Yaw=Yaw_r;
+		else
+			Yaw=Yaw_fc;
 //		if(circle.check&&circle.connect)
 //		yaw_qr_off=circle.yaw-Yaw;
 //		else if(circle.connect==0)
 //		yaw_qr_off=0;
 //	  Yaw+=yaw_qr_off;
 	  //fushion
-		if(cnt[1]++>2){cnt[1]=0;		
+		if(cnt[1]++>1){cnt[1]=0;		
 		dt_fushion=(float)Get_Cycle_T(2)/1000000.;		
 		
 			
@@ -136,17 +146,19 @@ int main(void)
 		acc_flt[1]=-firstOrderFilter(acc_neo_temp[0],&firstOrderFilters[ACC_LOWPASS_Y],dt_fushion);
 		acc_flt[0]=firstOrderFilter(acc_neo_temp[1],&firstOrderFilters[ACC_LOWPASS_X],dt_fushion);
 		acc_flt[2]=firstOrderFilter(acc_neo_temp[2],&firstOrderFilters[ACC_LOWPASS_Z],dt_fushion);			
-
-		if(ultra_distance<2300)
+    if(ultra_distance<2300||sonic_fc!=0)
 			flow_h=X_ukf_baro[0];//Moving_Median(0,10,((float)ultra_distance/1000.));
 		flow_flt[0]=flow_origin[0]*k_flow*flow_h;
 		flow_flt[1]=flow_origin[1]*k_flow*flow_h;
-		
+		//旋转安装角度
 	  accx=acc_flt[1]*sin(circle.yaw_off*0.0173)+acc_flt[0]*cos(circle.yaw_off*0.0173);
     accy=acc_flt[1]*cos(circle.yaw_off*0.0173)-acc_flt[0]*sin(circle.yaw_off*0.0173);
 	
     flowx=flow_flt[1]*sin(circle.yaw_off*0.0173)+flow_flt[0]*cos(circle.yaw_off*0.0173);
 	  flowy=flow_flt[1]*cos(circle.yaw_off*0.0173)-flow_flt[0]*sin(circle.yaw_off*0.0173);	
+		
+		xgyro=flow_integrated_ygyro*sin(circle.yaw_off*0.0173)+flow_integrated_xgyro*cos(circle.yaw_off*0.0173);
+	  ygyro=flow_integrated_ygyro*cos(circle.yaw_off*0.0173)-flow_integrated_xgyro*sin(circle.yaw_off*0.0173);	
 		
 	  ukf_pos_task_qr(0,0,Yaw,flowx,flowy,accx,accy,dt_fushion);
 		}
@@ -170,8 +182,8 @@ int main(void)
 					Send_TO_FC_DEBUG();
 					if(debug1||end_ble)
 					data_per_uart(
-					0,flowx*1000,X_ukf[1]*1000,
-					X_ukf[3]*100,flowy*1000,X_ukf[4]*1000,
+					xgyro*1000,flowx*1000,X_ukf[1]*1000,
+					X_ukf[3]*100,flowy*1000,ygyro*1000,
 					X_ukf[0]*100, circle.x,-circle.y,
 					(int16_t)(Yaw*10),(int16_t)(Pitch*10.0),(int16_t)(Roll*10.0),0,circle.check&&circle.connect,circle.check&&circle.connect,0);
          
@@ -181,9 +193,12 @@ int main(void)
 					//uart2
 			    Send_TO_FLOW();
 		}
-		
+		static u8 sonar_off=0;
+		if(sonic_fc>0)
+			sonar_off=1;
 		if(cnt[3]++>40){cnt[3]=0;	
     dt_sonar=(float)Get_Cycle_T(4)/1000000.;					
+		if(sonar_off==0)	
 		Ultra_Duty();
 		}
 		

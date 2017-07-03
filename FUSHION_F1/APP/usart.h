@@ -21,6 +21,9 @@ void data_per_uart(int16_t ax,int16_t ay, int16_t az, int16_t gx,int16_t  gy, in
 extern float flow_origin[2];
 extern float flow_origin_pi[2];
 extern float flow_k,flow_set_off[3];
+extern int sonic_fc;
+extern float Yaw_fc,flowx,flowy;
+extern float flow_integrated_xgyro,flow_integrated_ygyro,flow_integrated_zgyro;
 //---------------------
  typedef struct
 {

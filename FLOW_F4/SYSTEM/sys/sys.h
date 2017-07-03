@@ -17,6 +17,7 @@
 //нч
 ////////////////////////////////////////////////////////////////////////////////// 
 #include "jinclude.h"
+#define USE_CAMERA_WITH_FOCUS 1
 #if EN_JPG
 	#if EN_JPG_BUF
 	#define Frame_size 2
