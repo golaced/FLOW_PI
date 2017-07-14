@@ -342,7 +342,7 @@ void USART2_IRQHandler(void)                	//串口1中断服务程序
 } 
 	
 
-
+float acc_body[3];
 int sonic_fc;
 float Yaw_fc;
 float flow_k=1,flow_set_off[3]={0};
@@ -364,6 +364,33 @@ void Data_Receive_Anl3(u8 *data_buf,u8 num)
 	 circle.yaw_off=flow_set_off[2]=(float)((int16_t)(*(data_buf+10)<<8)|*(data_buf+11))/10.;	//安装角度
 	 sonic_fc=(float)((int16_t)(*(data_buf+12)<<8)|*(data_buf+13));
 	 Yaw_fc=(float)((int16_t)(*(data_buf+14)<<8)|*(data_buf+15))/10.;//角度对其坐标系
+	}else   if(*(data_buf+2)==0x01)//
+  { 
+		
+		Pitch=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/10.;
+		Roll=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/10.;
+	  Yaw_r=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/10.;
+		//fly_ready=*(data_buf+4);
+		//x=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+		//y=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+		//z=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+		//cp=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+		//cr=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+		//cy=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+		//spdx=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+		//spdy=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+		//connect=*(data_buf+4);
+		//check=*(data_buf+4);
+		//usespd=*(data_buf+4);
+		//sonar=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+		//baro=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
+	  //cal_step=*(data_buf+4);
+		acc_body[0]=(float)((int16_t)(*(data_buf+36)<<8)|*(data_buf+37))/100.;
+		acc_body[1]=(float)((int16_t)(*(data_buf+38)<<8)|*(data_buf+39))/100.;
+		acc_body[2]=(float)((int16_t)(*(data_buf+40)<<8)|*(data_buf+41))/100.;
+		mpu6050_fc.Gyro_deg.x=(float)((int16_t)(*(data_buf+42)<<8)|*(data_buf+43))/10.;
+		mpu6050_fc.Gyro_deg.y=(float)((int16_t)(*(data_buf+44)<<8)|*(data_buf+45))/10.;
+		mpu6050_fc.Gyro_deg.z=(float)((int16_t)(*(data_buf+46)<<8)|*(data_buf+47))/10.;
 	}
 	
 }

@@ -1,8 +1,8 @@
 #ifndef __INCLUDE_H
 #define	__INCLUDE_H
 
-
-
+#define USE_MINI_FC_FLOW_BOARD 1
+extern float Yaw_r;	
 typedef unsigned short uint16_t;
 typedef unsigned char  uint8_t;
 typedef unsigned char  uint8;                   /* defined for unsigned 8-bits integer variable 	无符号8位整型变量  */
@@ -163,6 +163,9 @@ enum
 #include "dma.h"
 #include "usart.h"
 #include "sonar.h"
+
+#define USE_SONAR 0
+
 void SetPB9(u8 sta);
 
 extern float acc_flt[3];

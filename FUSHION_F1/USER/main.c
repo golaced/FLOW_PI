@@ -3,6 +3,8 @@
 #include "filter.h"
 #include "stmflash.h"
 #include "ukf_task.h"
+#include "iic_vl53.h"
+#include "flash.h"
 float dt_mems,dt_imu,dt_fushion,dt_uart,dt_sonar;
 
 //设置PB9的状态 STM32-MINI开发板的LED控制管脚
@@ -40,6 +42,7 @@ float flowy;//=flow_flt[1]*cos(circle.yaw_off*0.0173)-flow_flt[0]*sin(circle.yaw
 
 float xgyro;
 float ygyro;
+float Yaw_r;	
 int main(void)
 {static u8 cnt[10];
 		//--------------------------- CLK INIT, HSE PLL ----------------------------
@@ -80,8 +83,16 @@ int main(void)
 		TIM5_Config();
 		Cycle_Time_Init();
 		Delay_ms(100);
+		#if !USE_MINI_FC_FLOW_BOARD
 		MPU6050_Init(20);
 		Delay_ms(100);
+		W25QXX_Init();			//W25QXX初始化
+		while(W25QXX_ReadID()!=W25Q32&&W25QXX_ReadID()!=W25Q16)								//检测不到W25Q128
+		{	
+			Delay_ms(100);
+		}
+	  READ_PARM();
+		#endif
 		UART_PI_CONFIG(115200);
 		UART_FLOW_CONFIG(115200);
 		UART_FLOW_CONFIG(576000);
@@ -100,18 +111,20 @@ int main(void)
 		{
 		dt_mems=(float)Get_Cycle_T(0)/1000000.;	
 			
-			
+		#if !USE_MINI_FC_FLOW_BOARD	
 		MPU6050_Read(); 															
 	  MPU6050_Data_Prepare( dt_mems );			
-		
-		float Yaw_r;	
+		#endif
+
 		//imu
     if(cnt[0]++>1){cnt[0]=0;		
-		dt_imu=(float)Get_Cycle_T(1)/1000000.;		
+		dt_imu=(float)Get_Cycle_T(1)/1000000.;
+    #if !USE_MINI_FC_FLOW_BOARD			
 		IMUupdate(0.5f *dt_imu,mpu6050_fc.Gyro_deg.x, mpu6050_fc.Gyro_deg.y, mpu6050_fc.Gyro_deg.z, 
 			mpu6050_fc.Acc.x, mpu6050_fc.Acc.y, mpu6050_fc.Acc.z,
 	    0,0,0,
 			&Roll,&Pitch,&Yaw_r);
+		#endif
 		}
 		static u8 Yaw_close=0;
 		if(Yaw_fc>0)
@@ -132,6 +145,7 @@ int main(void)
 			
 		static float a_br[3]={0};	
 		static float acc_temp[3]={0};
+		#if !USE_MINI_FC_FLOW_BOARD
 		a_br[0] =(float) mpu6050_fc.Acc.x/4096.;//16438.;
 		a_br[1] =(float) mpu6050_fc.Acc.y/4096.;//16438.;
 		a_br[2] =(float) mpu6050_fc.Acc.z/4096.;//16438.;
@@ -145,18 +159,25 @@ int main(void)
 		acc_neo_temp[2]=(acc_temp[2]-1.0f)*9.87;		
 		acc_flt[1]=-firstOrderFilter(acc_neo_temp[0],&firstOrderFilters[ACC_LOWPASS_Y],dt_fushion);
 		acc_flt[0]=firstOrderFilter(acc_neo_temp[1],&firstOrderFilters[ACC_LOWPASS_X],dt_fushion);
-		acc_flt[2]=firstOrderFilter(acc_neo_temp[2],&firstOrderFilters[ACC_LOWPASS_Z],dt_fushion);			
+		acc_flt[2]=firstOrderFilter(acc_neo_temp[2],&firstOrderFilters[ACC_LOWPASS_Z],dt_fushion);		
+    #endif		
     if(ultra_distance<2300||sonic_fc!=0)
 			flow_h=X_ukf_baro[0];//Moving_Median(0,10,((float)ultra_distance/1000.));
 		flow_flt[0]=flow_origin[0]*k_flow*flow_h;
 		flow_flt[1]=flow_origin[1]*k_flow*flow_h;
 		//旋转安装角度
+		#if USE_MINI_FC_FLOW_BOARD
+		accx=acc_body[0];
+		accy=acc_body[1];
+		flowx=flow_flt[0];
+		flowy=flow_flt[1];
+		#else
 	  accx=acc_flt[1]*sin(circle.yaw_off*0.0173)+acc_flt[0]*cos(circle.yaw_off*0.0173);
     accy=acc_flt[1]*cos(circle.yaw_off*0.0173)-acc_flt[0]*sin(circle.yaw_off*0.0173);
 	
     flowx=flow_flt[1]*sin(circle.yaw_off*0.0173)+flow_flt[0]*cos(circle.yaw_off*0.0173);
 	  flowy=flow_flt[1]*cos(circle.yaw_off*0.0173)-flow_flt[0]*sin(circle.yaw_off*0.0173);	
-		
+		#endif
 		xgyro=flow_integrated_ygyro*sin(circle.yaw_off*0.0173)+flow_integrated_xgyro*cos(circle.yaw_off*0.0173);
 	  ygyro=flow_integrated_ygyro*cos(circle.yaw_off*0.0173)-flow_integrated_xgyro*sin(circle.yaw_off*0.0173);	
 		
@@ -186,8 +207,6 @@ int main(void)
 					X_ukf[3]*100,flowy*1000,ygyro*1000,
 					X_ukf[0]*100, circle.x,-circle.y,
 					(int16_t)(Yaw*10),(int16_t)(Pitch*10.0),(int16_t)(Roll*10.0),0,circle.check&&circle.connect,circle.check&&circle.connect,0);
-         
-					
 					MYDMA_Enable(DMA1_Channel2,SendBuff_cnt);  							
 					}	
 					//uart2
@@ -196,10 +215,22 @@ int main(void)
 		static u8 sonar_off=0;
 		if(sonic_fc>0)
 			sonar_off=1;
-		if(cnt[3]++>40){cnt[3]=0;	
+		#if USE_SONAR	
+		if(cnt[3]++>40){
+		#else
+		if(cnt[3]++>10){
+    #endif			
+		cnt[3]=0;	
     dt_sonar=(float)Get_Cycle_T(4)/1000000.;					
-		if(sonar_off==0)	
+		if(sonar_off==0){	
+		#if USE_SONAR	
 		Ultra_Duty();
+		#else
+		READ_VL53();
+		ultra_distance=ls53.distance;	
+		ultra_ok = 1;	
+		#endif
+		}
 		}
 		
 		if(cnt[5]++>25){cnt[5]=0;		

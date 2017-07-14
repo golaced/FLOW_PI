@@ -44,6 +44,8 @@ u8 use_spd;
 float yaw_off;
 }CIRCLE;
 extern CIRCLE circle;
+
+extern float acc_body[3];
 #endif
 
 

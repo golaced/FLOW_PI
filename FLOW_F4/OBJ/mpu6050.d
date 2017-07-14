@@ -36,6 +36,8 @@
 ..\obj\mpu6050.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\mpu6050.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
 ..\obj\mpu6050.o: ..\SYSTEM\sys\sys.h
+..\obj\mpu6050.o: ..\HARDWARE\USART2\jinclude.h
+..\obj\mpu6050.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\mpu6050.o: ..\HARDWARE\LED\mymath.h
 ..\obj\mpu6050.o: ..\HARDWARE\LED\i2c_soft.h
 ..\obj\mpu6050.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\time.h

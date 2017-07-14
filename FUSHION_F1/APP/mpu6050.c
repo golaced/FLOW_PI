@@ -249,7 +249,7 @@ void MPU6050_Data_Offset()
             mpu6050_fc.Acc_Temprea_Offset = sum_temp[TEM]/OFFSET_AV_NUM;
             acc_sum_cnt =0;
             mpu6050_fc.Acc_CALIBRATE = 0;
-            //WRITE_PARM();
+            WRITE_PARM();
 					  need_init_mems=2;
             sum_temp[A_X] = sum_temp[A_Y] = sum_temp[A_Z] = sum_temp[TEM] = 0;
 				  	sum_temp_att[1]=sum_temp_att[0]=0;
@@ -273,7 +273,7 @@ void MPU6050_Data_Offset()
             gyro_sum_cnt =0;need_init_mems=0;
             if(mpu6050_fc.Gyro_CALIBRATE == 1)
 			{
-              // WRITE_PARM();
+              WRITE_PARM();
 			}  
             mpu6050_fc.Gyro_CALIBRATE = 0;
             sum_temp[G_X] = sum_temp[G_Y] = sum_temp[G_Z] = sum_temp[TEM] = 0;

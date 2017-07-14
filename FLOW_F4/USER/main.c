@@ -19,7 +19,7 @@
 #include "iwdg.h"
 #include "imu.h"
 #include "mpu6050.h" 
-
+u8 mcuID[3];
 u8 MAX_BRIGHT=250;
 u16 max_num=3;
 #define W (int)(64*Frame_size)
@@ -296,8 +296,9 @@ while(1)
 		}		
 		#endif
 		if(t_mpu>0.015){
-//		MPU6050_Read();
-//		MPU6050_Data_Prepare( t_mpu );			
+		if(mcuID[0]==47&&mcuID[1]==13&&mcuID[2]==49){
+		MPU6050_Read();
+		MPU6050_Data_Prepare( t_mpu );}			
    
 	  //Send_FLOW();
 	 if(fc_connect_loss++>33)fc_connect=0;	
@@ -320,6 +321,7 @@ while(1)
 		image_buffer_8bit_2_t[k++]=image_buffer_8bit_2[i+j*64];	
 			
 		flow_q=flow_task(image_buffer_8bit_2, image_buffer_8bit_1,image_buffer_8bit_2_t, image_buffer_8bit_1_t,t_flow);
+		
 		for(i=0;i<64*64;i++)
 		image_buffer_8bit_1[i]=image_buffer_8bit_2[i];	
 		for(i=0;i<64*64;i++)
@@ -335,9 +337,9 @@ while(1)
 		flow.integration_time_us=deltatime ;
 		flow.integrated_y=-pixel_flow_x  / focal_length_px * 1.0f*k_px; 
 		flow.integrated_x=-pixel_flow_y  / focal_length_px * 1.0f*k_px;
-		flow.integrated_xgyro=x_rate *flow.integration_time_us/1000000.;
-		flow.integrated_ygyro=y_rate *flow.integration_time_us/1000000.;
-		flow.integrated_zgyro=z_rate *flow.integration_time_us/1000000.;
+		flow.integrated_xgyro=x_rate *flow.integration_time_us/1000000.*1;
+		flow.integrated_ygyro=y_rate *flow.integration_time_us/1000000.*1;
+		flow.integrated_zgyro=z_rate *flow.integration_time_us/1000000.*1;
     flow_pertreatment_oldx(&flow,0);//comp_grop;
 		
     lasttime = micros();
@@ -381,7 +383,7 @@ while(1)
 									case 1:
 							  data_per_uart1(pixel_flow_x*100,pixel_flow_x_klt*100,pixel_flow_x_sad*100,													 
 								0*100,pixel_flow_y_klt*100,pixel_flow_y_sad*100,				//flow.integrated_x*100,1*flow.integrated_xgyro*100,0*flow.h_x_pix*100,															
-								flow.integrated_y*100,flow.integrated_ygyro*100,pixel_flow_y*100,
+								flow_per_out[3]*100,flow.integrated_ygyro*100,flow.integrated_y*100,
 						    	0*10,0*10,0*10,0,0,0,0);	
 									break;
 								}									
@@ -395,7 +397,7 @@ while(1)
 	}
 	}       
 } 
-u8 mcuID[3];
+
 void cpuidGetId(void)
 {
     mcuID[0] = *(__IO u32*)(0x1FFF7A10);
@@ -414,13 +416,15 @@ int main(void)
 	Cycle_Time_Init();
 	cpuidGetId();
 	//uart_init(576000);		//初始化串口波特率为115200
-	if(mcuID[0]==47&&mcuID[1]==13&&mcuID[2]==49)
+//	if(mcuID[0]==47&&mcuID[1]==13&&mcuID[2]==49)
 	uart_init2(115200);		//初始化串口波特率为115200
-	else
-	uart_init2(576000);		//初始化串口波特率为115200
+//	else
+//	uart_init2(576000);		//初始化串口波特率为115200
 	LED_Init();					//初始化LED 
  	KEY_Init();					//按键初始化 
 	delay_ms(10);
+	if(mcuID[0]==47&&mcuID[1]==13&&mcuID[2]==49)
+	MPU6050_Init(98);
 //	W25QXX_Init();			//W25QXX初始化
 //	delay_ms(10);
 //	while(W25QXX_ReadID()!=W25Q32&&W25QXX_ReadID()!=W25Q16)	

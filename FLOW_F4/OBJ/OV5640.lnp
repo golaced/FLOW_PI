@@ -30,6 +30,7 @@
 "..\obj\mymath.o"
 "..\obj\filter.o"
 "..\obj\flow_s.o"
+"..\obj\mpu6050.o"
 "..\obj\dct.o"
 "..\obj\jchuff.o"
 "..\obj\jcapi.o"

@@ -2,7 +2,7 @@
 #include "mymath.h"
 #include "i2c_soft.h"
 #include "delay.h"
-MPU6050_STRUCT mpu6050,mpu6050_fc;
+//MPU6050_STRUCT mpu6050,mpu6050_fc;
 
 volatile u8 mpu6050_buffer[14]={0};
 u8 mpu6050_ok;
@@ -273,7 +273,7 @@ void MPU6050_Data_Offset()
             gyro_sum_cnt =0;
             if(mpu6050_fc.Gyro_CALIBRATE == 1)
 			{
-               WRITE_PARM();// Param_SaveGyroOffset(&mpu6050_fc.Gyro_Offset);
+               //WRITE_PARM();// Param_SaveGyroOffset(&mpu6050_fc.Gyro_Offset);
 				//f.msg_id = 2;
 				//f.msg_data = 1;
 			}
@@ -388,7 +388,7 @@ void MPU6050_Data_Prepare(float T)
     Transform(mpu_fil_tmp[A_X],mpu_fil_tmp[A_Y],mpu_fil_tmp[A_Z],&mpu6050_fc.Acc.x,&mpu6050_fc.Acc.y,&mpu6050_fc.Acc.z);
     Transform(mpu_fil_tmp[G_X],mpu_fil_tmp[G_Y],mpu_fil_tmp[G_Z],&mpu6050_fc.Gyro.x,&mpu6050_fc.Gyro.y,&mpu6050_fc.Gyro.z);
 
-    mpu6050_fc.Gyro_deg.x = mpu6050_fc.Gyro.x *TO_ANGLE;
+    mpu6050_fc.Gyro_deg.x = -mpu6050_fc.Gyro.x *TO_ANGLE;
     mpu6050_fc.Gyro_deg.y = mpu6050_fc.Gyro.y *TO_ANGLE;
     mpu6050_fc.Gyro_deg.z = mpu6050_fc.Gyro.z *TO_ANGLE;
 

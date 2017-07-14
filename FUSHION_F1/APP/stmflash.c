@@ -1,5 +1,5 @@
 #include "stmflash.h"
- 
+#include "flash.h" 
 // addr:??  count:???  
 flash_status_t FlashErase(uint32_t addr, uint8_t count)  
 {  
@@ -44,14 +44,15 @@ uint32_t FlashRead(uint32_t addr, uint8_t *buffer, uint32_t length)
 }  
 
 //-----------------------------------------存储参数
-#define FLASH_USE_STM32 1
-#define SIZE_PARAM 50
+#define FLASH_USE_STM32 0
+#define SIZE_PARAM 100
+u32 FLASH_SIZE=16*1024*1024;	//FLASH 大小为16字节
 u8 FLASH_READ_BUF[SIZE_PARAM]={0};
 void READ_PARM(void)
 {
 
-FlashRead(FLASH_END_ADDR,FLASH_READ_BUF,SIZE_PARAM);	
-
+//FlashRead(FLASH_END_ADDR,FLASH_READ_BUF,SIZE_PARAM);	
+W25QXX_Read(FLASH_READ_BUF,FLASH_SIZE-100,SIZE_PARAM);					//从倒数第100个地址处开始,读出SIZE个字节
 mpu6050_fc.Gyro_Offset.x=(vs16)(FLASH_READ_BUF[1]<<8|FLASH_READ_BUF[0]);
 mpu6050_fc.Gyro_Offset.y=(vs16)(FLASH_READ_BUF[3]<<8|FLASH_READ_BUF[2]);
 mpu6050_fc.Gyro_Offset.z=(vs16)(FLASH_READ_BUF[5]<<8|FLASH_READ_BUF[4]);
@@ -69,7 +70,7 @@ mpu6050_fc.Acc_Offset.z=(vs16)(FLASH_READ_BUF[11]<<8|FLASH_READ_BUF[10]);
 //ak8975_fc.Mag_Gain.z =(float)((vs16)((FLASH_READ_BUF[23]<<8|FLASH_READ_BUF[22])))/100.;
 	
 
-	 WRITE_PARM();
+//WRITE_PARM();
 }
 
 void WRITE_PARM(void)
@@ -118,6 +119,6 @@ FLASH_READ_BUF[cnt++]=BYTE1(_temp);
 //FLASH_Buffer[cnt++]=BYTE0(_temp);
 //FLASH_Buffer[cnt++]=BYTE1(_temp);
 
-FlashWrite(FLASH_START_ADDR,FLASH_READ_BUF,SIZE_PARAM);
-
+//FlashWrite(FLASH_START_ADDR,FLASH_READ_BUF,SIZE_PARAM);
+W25QXX_Write((u8*)FLASH_READ_BUF,FLASH_SIZE-100,SIZE_PARAM);		//从倒数第100个地址处开始,写入SIZE长度的数据
 }

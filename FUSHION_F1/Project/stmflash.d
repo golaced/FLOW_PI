@@ -27,3 +27,5 @@
 .\stmflash.o: ..\APP\usart.h
 .\stmflash.o: ..\APP\sonar.h
 .\stmflash.o: ..\Libraries\inc\stm32f10x_flash.h
+.\stmflash.o: ..\APP\flash.h
+.\stmflash.o: ..\Libraries\inc\stm32f10x_spi.h

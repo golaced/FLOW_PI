@@ -26,4 +26,6 @@
 .\sonar.o: ..\APP\usart.h
 .\sonar.o: ..\APP\sonar.h
 .\sonar.o: ..\APP\filter.h
+.\sonar.o: ..\APP\iic_vl53.h
+.\sonar.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\time.h
 .\sonar.o: ..\Libraries\inc\stm32f10x_exti.h

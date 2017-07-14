@@ -311,9 +311,9 @@
           <Cads>
             <interw>1</interw>
             <Optim>1</Optim>
-            <oTime>0</oTime>
+            <oTime>1</oTime>
             <SplitLS>0</SplitLS>
-            <OneElfS>1</OneElfS>
+            <OneElfS>0</OneElfS>
             <Strict>0</Strict>
             <EnumInt>0</EnumInt>
             <PlainCh>0</PlainCh>
@@ -402,6 +402,11 @@
               <FileType>1</FileType>
               <FilePath>..\APP\stmflash.c</FilePath>
             </File>
+            <File>
+              <FileName>flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\flash.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -447,6 +452,11 @@
               <FileType>1</FileType>
               <FilePath>..\Libraries\src\stm32f10x_exti.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f10x_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\src\stm32f10x_spi.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -491,6 +501,11 @@
               <FileName>sonar.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\APP\sonar.c</FilePath>
+            </File>
+            <File>
+              <FileName>iic_vl53.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\iic_vl53.c</FilePath>
             </File>
           </Files>
         </Group>

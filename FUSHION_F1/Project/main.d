@@ -29,3 +29,7 @@
 .\main.o: ..\APP\stmflash.h
 .\main.o: ..\Libraries\inc\stm32f10x_flash.h
 .\main.o: ..\FUSHION\ukf_task.h
+.\main.o: ..\APP\iic_vl53.h
+.\main.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\time.h
+.\main.o: ..\APP\flash.h
+.\main.o: ..\Libraries\inc\stm32f10x_spi.h

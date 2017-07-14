@@ -1,6 +1,7 @@
 #include "include.h"
 #include "sonar.h"
 #include "filter.h"
+#include "iic_vl53.h"
 #include "stm32f10x_exti.h"
 float T_sonar;
 int ultra_distance;
@@ -55,10 +56,12 @@ return temp;
 }
 
 void Ultrasonic_Init()
-{ 
- 
-	SONAR_GPIO_Config();	ultra_ok = 0;
-
+{ ultra_ok = 0;
+  #if USE_SONAR
+	SONAR_GPIO_Config();	
+  #else
+	I2c_Soft_Init_VL53();
+	#endif
 }
 
 s8 ultra_start_f;
