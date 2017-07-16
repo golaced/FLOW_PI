@@ -23,7 +23,7 @@ extern float flow_origin_pi[2];
 extern float flow_k,flow_set_off[3];
 extern int sonic_fc;
 extern float Yaw_fc,flowx,flowy;
-extern float flow_integrated_xgyro,flow_integrated_ygyro,flow_integrated_zgyro;
+extern float flow_integrated_xgyro,flow_integrated_ygyro,flow_integrated_zgyro,integrated_x,integrated_y;
 //---------------------
  typedef struct
 {

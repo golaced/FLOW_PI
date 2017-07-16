@@ -27,18 +27,18 @@ uint16_t makeuint16(int lsb, int msb)
 }
 
 u8 READ_VL53(void){
-u8 cnt,val;
+u8 flag1=0,val=0;
 u8 gbuf[16];
 uint16_t count[3];
 u8 DeviceRangeStatusInternal;
 		 IIC_Write_1Byte_VL53(VL53L0X_Add,VL53L0X_REG_SYSRANGE_START, 0x01);
 		 
-		 while(cnt < 10)
+		 while(flag1 < 10)
 		 {
-				Delay_ms(10);
+				Delay_ms(1);
 				IIC_Read_1Byte_VL53(VL53L0X_Add,VL53L0X_REG_RESULT_RANGE_STATUS,&val);
 				if( val & 0x01) break;
-				cnt++;
+				flag1++;
 		 }
 
 		 if( val & 0x01)

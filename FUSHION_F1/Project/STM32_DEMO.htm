@@ -3,9 +3,9 @@
 <title>Static Call Graph - [.\STM32_DEMO.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\STM32_DEMO.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060183: Last Updated: Fri Jul 14 18:55:42 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060183: Last Updated: Sat Jul 15 16:13:42 2017
 <BR><P>
-<H3>Maximum Stack Usage =       1448 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =       1464 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 __rt_entry_main &rArr; main &rArr; ukf_pos_task_qr &rArr; KF_OLDX_NAV &rArr; rt_powd_snf &rArr; pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
 <P>
@@ -192,7 +192,7 @@ Global Symbols
 <P><STRONG><a name="[162]"></a>__rt_entry_postsh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$00000009))
 
 <P><STRONG><a name="[42]"></a>__rt_entry_main</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$0000000D))
-<BR><BR>[Stack]<UL><LI>Max Depth = 1448 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 1464 + Unknown Stack Size
 <LI>Call Chain = __rt_entry_main &rArr; main &rArr; ukf_pos_task_qr &rArr; KF_OLDX_NAV &rArr; rt_powd_snf &rArr; pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -226,8 +226,8 @@ Global Symbols
 <LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[43]"></a>main</STRONG> (Thumb, 1650 bytes, Stack size 80 bytes, main.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 1448<LI>Call Chain = main &rArr; ukf_pos_task_qr &rArr; KF_OLDX_NAV &rArr; rt_powd_snf &rArr; pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
+<P><STRONG><a name="[43]"></a>main</STRONG> (Thumb, 2072 bytes, Stack size 96 bytes, main.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 1464<LI>Call Chain = main &rArr; ukf_pos_task_qr &rArr; KF_OLDX_NAV &rArr; rt_powd_snf &rArr; pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ukf_pos_task_qr
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_init
@@ -392,7 +392,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
-<P><STRONG><a name="[8f]"></a>Data_Receive_Anl2</STRONG> (Thumb, 282 bytes, Stack size 40 bytes, usart.o(.text))
+<P><STRONG><a name="[8f]"></a>Data_Receive_Anl2</STRONG> (Thumb, 370 bytes, Stack size 40 bytes, usart.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = Data_Receive_Anl2 &rArr; __aeabi_ddiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2f
@@ -403,7 +403,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[33]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART2_IRQHandler
 </UL>
 
-<P><STRONG><a name="[33]"></a>USART2_IRQHandler</STRONG> (Thumb, 324 bytes, Stack size 8 bytes, usart.o(.text))
+<P><STRONG><a name="[33]"></a>USART2_IRQHandler</STRONG> (Thumb, 332 bytes, Stack size 8 bytes, usart.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = USART2_IRQHandler &rArr; Data_Receive_Anl2 &rArr; __aeabi_ddiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ReceiveData
@@ -412,7 +412,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
-<P><STRONG><a name="[90]"></a>Data_Receive_Anl3</STRONG> (Thumb, 716 bytes, Stack size 40 bytes, usart.o(.text))
+<P><STRONG><a name="[90]"></a>Data_Receive_Anl3</STRONG> (Thumb, 724 bytes, Stack size 40 bytes, usart.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = Data_Receive_Anl3 &rArr; __aeabi_ddiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2f
@@ -424,7 +424,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[34]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART3_IRQHandler
 </UL>
 
-<P><STRONG><a name="[34]"></a>USART3_IRQHandler</STRONG> (Thumb, 258 bytes, Stack size 8 bytes, usart.o(.text))
+<P><STRONG><a name="[34]"></a>USART3_IRQHandler</STRONG> (Thumb, 348 bytes, Stack size 8 bytes, usart.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = USART3_IRQHandler &rArr; Data_Receive_Anl3 &rArr; __aeabi_ddiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ReceiveData
@@ -433,7 +433,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
-<P><STRONG><a name="[91]"></a>UsartSend1</STRONG> (Thumb, 110 bytes, Stack size 8 bytes, usart.o(.text), UNUSED)
+<P><STRONG><a name="[91]"></a>UsartSend1</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, usart.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_SendData
 <LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_GetFlagStatus
 </UL>
@@ -456,13 +456,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Send_Data3
 </UL>
 
-<P><STRONG><a name="[7c]"></a>data_per_uart</STRONG> (Thumb, 2006 bytes, Stack size 40 bytes, usart.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = data_per_uart
+<P><STRONG><a name="[7c]"></a>data_per_uart</STRONG> (Thumb, 136 bytes, Stack size 44 bytes, usart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = data_per_uart
 </UL>
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[75]"></a>Send_TO_FC</STRONG> (Thumb, 870 bytes, Stack size 56 bytes, usart.o(.text))
+<P><STRONG><a name="[75]"></a>Send_TO_FC</STRONG> (Thumb, 952 bytes, Stack size 56 bytes, usart.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = Send_TO_FC &rArr; __aeabi_dmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
@@ -474,13 +474,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[79]"></a>Send_TO_FC_DEBUG</STRONG> (Thumb, 248 bytes, Stack size 20 bytes, usart.o(.text))
+<P><STRONG><a name="[79]"></a>Send_TO_FC_DEBUG</STRONG> (Thumb, 190 bytes, Stack size 20 bytes, usart.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = Send_TO_FC_DEBUG
 </UL>
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[76]"></a>Send_TO_FC_OSENSOR</STRONG> (Thumb, 614 bytes, Stack size 24 bytes, usart.o(.text))
+<P><STRONG><a name="[76]"></a>Send_TO_FC_OSENSOR</STRONG> (Thumb, 660 bytes, Stack size 24 bytes, usart.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = Send_TO_FC_OSENSOR &rArr; __aeabi_fmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
@@ -489,7 +489,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[77]"></a>Send_TO_FC_OVISON</STRONG> (Thumb, 502 bytes, Stack size 24 bytes, usart.o(.text))
+<P><STRONG><a name="[77]"></a>Send_TO_FC_OVISON</STRONG> (Thumb, 464 bytes, Stack size 24 bytes, usart.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = Send_TO_FC_OVISON &rArr; __aeabi_f2iz
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2iz
@@ -505,7 +505,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[7d]"></a>Send_TO_FLOW</STRONG> (Thumb, 310 bytes, Stack size 80 bytes, usart.o(.text))
+<P><STRONG><a name="[7d]"></a>Send_TO_FLOW</STRONG> (Thumb, 336 bytes, Stack size 80 bytes, usart.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = Send_TO_FLOW &rArr; Send_Data2 &rArr; UsartSend2
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Send_Data2
@@ -1459,7 +1459,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;READ_VL53
 </UL>
 
-<P><STRONG><a name="[7e]"></a>READ_VL53</STRONG> (Thumb, 218 bytes, Stack size 48 bytes, iic_vl53.o(.text))
+<P><STRONG><a name="[7e]"></a>READ_VL53</STRONG> (Thumb, 238 bytes, Stack size 48 bytes, iic_vl53.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = READ_VL53 &rArr; insert_sonar_value_and_get_mode_value &rArr; sonar_bubble_sort
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Delay_ms
@@ -1474,7 +1474,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[be]"></a>I2c_Soft_Init_VL53</STRONG> (Thumb, 80 bytes, Stack size 8 bytes, iic_vl53.o(.text))
+<P><STRONG><a name="[be]"></a>I2c_Soft_Init_VL53</STRONG> (Thumb, 64 bytes, Stack size 8 bytes, iic_vl53.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = I2c_Soft_Init_VL53 &rArr; GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd

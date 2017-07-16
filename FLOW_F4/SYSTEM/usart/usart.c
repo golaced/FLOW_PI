@@ -321,7 +321,13 @@ void Send_FLOW(void)
 	_temp = (vs16)(flow.integrated_zgyro*1000);//ultra_distance;
 	SendBuff2[SendBuff2_cnt++]=BYTE1(_temp);
 	SendBuff2[SendBuff2_cnt++]=BYTE0(_temp);
-
+	_temp = (vs16)(flow.integrated_x*1000);//ultra_distance;
+	SendBuff2[SendBuff2_cnt++]=BYTE1(_temp);
+	SendBuff2[SendBuff2_cnt++]=BYTE0(_temp);
+	_temp = (vs16)(flow.integrated_y*1000);//ultra_distance;
+	SendBuff2[SendBuff2_cnt++]=BYTE1(_temp);
+	SendBuff2[SendBuff2_cnt++]=BYTE0(_temp);
+  
 	
 	SendBuff2[3] = SendBuff2_cnt-_cnt-4;
 

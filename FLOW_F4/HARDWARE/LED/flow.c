@@ -4,7 +4,7 @@
 #define KLT2 0
 #define SAD2 0
 #define USE_SAD 0
-#define SAD_WITH_KLT 1
+#define SAD_WITH_KLT 0
 #define FRAME_SIZE	64
 
 //k_sad
@@ -29,7 +29,7 @@ u8 en_gro_filter=0;
 #define  NUM_BLOCKS_KLT	6//3 8 x & y number of tiles to check  6
 //this are the settings for KLT based flow
 #define PYR_LVLS 1
-#define HALF_PATCH_SIZE 4       //this is half the wanted patch size minus 1  6
+#define HALF_PATCH_SIZE 6       //this is half the wanted patch size minus 1  6
 #define PATCH_SIZE (HALF_PATCH_SIZE*2+1)
 u8 meancount_set_klt=6;
 u8 en_hist_filter_klt=0;

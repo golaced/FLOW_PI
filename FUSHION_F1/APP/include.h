@@ -2,7 +2,7 @@
 #define	__INCLUDE_H
 
 #define USE_MINI_FC_FLOW_BOARD 1
-extern float Yaw_r;	
+
 typedef unsigned short uint16_t;
 typedef unsigned char  uint8_t;
 typedef unsigned char  uint8;                   /* defined for unsigned 8-bits integer variable 	无符号8位整型变量  */
@@ -14,7 +14,8 @@ typedef signed   int   int32;                   /* defined for signed 32-bits in
 typedef float          fp32;                    /* single precision floating point variable (32bits) 单精度浮点数（32位长度） */
 typedef double         fp64;                    /* double precision floating point variable (64bits) 双精度浮点数（64位长度） */
 
-
+extern float Yaw_r;	
+extern char debug1;
 enum
 {
  A_X = 0,

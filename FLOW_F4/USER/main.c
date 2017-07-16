@@ -417,9 +417,9 @@ int main(void)
 	cpuidGetId();
 	//uart_init(576000);		//初始化串口波特率为115200
 //	if(mcuID[0]==47&&mcuID[1]==13&&mcuID[2]==49)
-	uart_init2(115200);		//初始化串口波特率为115200
+//	uart_init2(115200);		//初始化串口波特率为115200
 //	else
-//	uart_init2(576000);		//初始化串口波特率为115200
+	uart_init2(576000);		//初始化串口波特率为115200
 	LED_Init();					//初始化LED 
  	KEY_Init();					//按键初始化 
 	delay_ms(10);

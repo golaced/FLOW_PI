@@ -404,6 +404,7 @@ const u16 ov5640_rgb565_reg_tbl60[][2]=
 	// input clock 24Mhz, PCLK 42Mhz
 	0x3035, 0x11, // PLL
 	0x3036, 180, // PLL 0x69
+	//0x3036, 0x69, // PLL 0x69
 	0x3c07, 0x07, // lightmeter 1 threshold[7:0]
 	0x3820, 0x46, // flip
 	0x3821, 0x00, // mirror

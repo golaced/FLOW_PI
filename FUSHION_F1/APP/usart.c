@@ -260,7 +260,7 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 	
 
 float flow_origin[2];
-float flow_integrated_xgyro,flow_integrated_ygyro,flow_integrated_zgyro;
+float flow_integrated_xgyro,flow_integrated_ygyro,flow_integrated_zgyro,integrated_x,integrated_y;
 void Data_Receive_Anl2(u8 *data_buf,u8 num)
 {
 	vs16 rc_value_temp;
@@ -277,7 +277,9 @@ void Data_Receive_Anl2(u8 *data_buf,u8 num)
    flow_origin[1]=(float)((int16_t)(*(data_buf+6)<<8)|*(data_buf+7))/1000.;
 	 flow_integrated_xgyro=(float)((int16_t)(*(data_buf+8)<<8)|*(data_buf+9))/1000.;	
 	 flow_integrated_ygyro=(float)((int16_t)(*(data_buf+10)<<8)|*(data_buf+11))/1000.;	
-   flow_integrated_zgyro=(float)((int16_t)(*(data_buf+12)<<8)|*(data_buf+13))/1000.;			
+   flow_integrated_zgyro=(float)((int16_t)(*(data_buf+12)<<8)|*(data_buf+13))/1000.;	
+   integrated_x=(float)((int16_t)(*(data_buf+14)<<8)|*(data_buf+15))/1000.;		
+	 integrated_y=(float)((int16_t)(*(data_buf+16)<<8)|*(data_buf+17))/1000.;		
 	}
 	
 }
@@ -368,8 +370,8 @@ void Data_Receive_Anl3(u8 *data_buf,u8 num)
   { 
 		
 		Pitch=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/10.;
-		Roll=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/10.;
-	  Yaw_r=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/10.;
+		Roll=(float)((int16_t)(*(data_buf+6)<<8)|*(data_buf+7))/10.;
+	  Yaw_r=(float)((int16_t)(*(data_buf+8)<<8)|*(data_buf+9))/10.;
 		//fly_ready=*(data_buf+4);
 		//x=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
 		//y=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
@@ -385,12 +387,12 @@ void Data_Receive_Anl3(u8 *data_buf,u8 num)
 		//sonar=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
 		//baro=(float)((int16_t)(*(data_buf+4)<<8)|*(data_buf+5))/1000.;
 	  //cal_step=*(data_buf+4);
-		acc_body[0]=(float)((int16_t)(*(data_buf+36)<<8)|*(data_buf+37))/100.;
-		acc_body[1]=(float)((int16_t)(*(data_buf+38)<<8)|*(data_buf+39))/100.;
-		acc_body[2]=(float)((int16_t)(*(data_buf+40)<<8)|*(data_buf+41))/100.;
-		mpu6050_fc.Gyro_deg.x=(float)((int16_t)(*(data_buf+42)<<8)|*(data_buf+43))/10.;
-		mpu6050_fc.Gyro_deg.y=(float)((int16_t)(*(data_buf+44)<<8)|*(data_buf+45))/10.;
-		mpu6050_fc.Gyro_deg.z=(float)((int16_t)(*(data_buf+46)<<8)|*(data_buf+47))/10.;
+		acc_body[0]=(float)((int16_t)(*(data_buf+37)<<8)|*(data_buf+38))/100.;
+		acc_body[1]=(float)((int16_t)(*(data_buf+39)<<8)|*(data_buf+40))/100.;
+		acc_body[2]=(float)((int16_t)(*(data_buf+41)<<8)|*(data_buf+42))/100.;
+		mpu6050_fc.Gyro_deg.x=-(float)((int16_t)(*(data_buf+43)<<8)|*(data_buf+44))/10.;
+		mpu6050_fc.Gyro_deg.y=-(float)((int16_t)(*(data_buf+45)<<8)|*(data_buf+46))/10.;
+		mpu6050_fc.Gyro_deg.z=(float)((int16_t)(*(data_buf+47)<<8)|*(data_buf+48))/10.;
 	}
 	
 }
@@ -512,7 +514,7 @@ u16 i=0;
 unsigned int temp=0xaF+9;
 char ctemp;	
 
-debug[0]=end_ble;
+debug[0]=debug1;
 debug[1]=ax;
 debug[2]=ay;
 debug[3]=az;
@@ -528,7 +530,8 @@ debug[12]=roll;
 debug[13]=alt;	
 debug[14]=tempr;		
 debug[15]=press;	
-debug[16]=IMUpersec;			
+debug[16]=IMUpersec;	
+#if !USE_MINI_FC_FLOW_BOARD
 if(!end_ble){	
 SendBuff[SendBuff_cnt++]=0xa5;
 SendBuff[SendBuff_cnt++]=0x5a;
@@ -674,6 +677,7 @@ temp+=ctemp;
 SendBuff[SendBuff_cnt++]=(temp%256);
 SendBuff[SendBuff_cnt++]=(0xaa);
 }
+#endif
 }
 
 

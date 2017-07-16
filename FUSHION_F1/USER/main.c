@@ -29,10 +29,14 @@ void SetPB9(u8 sta)
 
 float acc_flt[3];
 float flow_flt[3];
+#if USE_MINI_FC_FLOW_BOARD
+float k_flow=0.3;//0.3
+#else
 float k_flow=0.45;
+#endif
 float yaw_qr_off;
 float flow_h;	
-u8 debug1=0;
+char debug1=0;
 u8 end_ble=1;
 float accx;//=acc_flt[1]*sin(circle.yaw_off*0.0173)+acc_flt[0]*cos(circle.yaw_off*0.0173);
 float accy;//=acc_flt[1]*cos(circle.yaw_off*0.0173)-acc_flt[0]*sin(circle.yaw_off*0.0173);
@@ -43,6 +47,8 @@ float flowy;//=flow_flt[1]*cos(circle.yaw_off*0.0173)-flow_flt[0]*sin(circle.yaw
 float xgyro;
 float ygyro;
 float Yaw_r;	
+
+u8 up_sel=0;
 int main(void)
 {static u8 cnt[10];
 		//--------------------------- CLK INIT, HSE PLL ----------------------------
@@ -139,7 +145,7 @@ int main(void)
 //		yaw_qr_off=0;
 //	  Yaw+=yaw_qr_off;
 	  //fushion
-		if(cnt[1]++>1){cnt[1]=0;		
+		if(cnt[1]++>0){cnt[1]=0;		
 		dt_fushion=(float)Get_Cycle_T(2)/1000000.;		
 		
 			
@@ -167,10 +173,11 @@ int main(void)
 		flow_flt[1]=flow_origin[1]*k_flow*flow_h;
 		//旋转安装角度
 		#if USE_MINI_FC_FLOW_BOARD
-		accx=acc_body[0];
-		accy=acc_body[1];
-		flowx=flow_flt[0];
-		flowy=flow_flt[1];
+		accx=acc_flt[0]=acc_body[0];
+		accy=acc_flt[1]=acc_body[1];
+		acc_flt[2]=acc_body[2];
+		flowx=flow_flt[1];
+		flowy=-flow_flt[0];
 		#else
 	  accx=acc_flt[1]*sin(circle.yaw_off*0.0173)+acc_flt[0]*cos(circle.yaw_off*0.0173);
     accy=acc_flt[1]*cos(circle.yaw_off*0.0173)-acc_flt[0]*sin(circle.yaw_off*0.0173);
@@ -183,31 +190,48 @@ int main(void)
 		
 	  ukf_pos_task_qr(0,0,Yaw,flowx,flowy,accx,accy,dt_fushion);
 		}
-		
+		debug1=1;
 		//uart
-		if(cnt[2]++>3){cnt[2]=0;		
+		if(cnt[2]++>2){cnt[2]=0;		
 		dt_uart=(float)Get_Cycle_T(3)/1000000.;		
-		
+		      
 					if(DMA_GetFlagStatus(DMA1_FLAG_TC2)!=RESET)//等待通道4传输完成
 					{
 					DMA_ClearFlag(DMA1_FLAG_TC2);//清除通道4传输完成标志
 					SendBuff_cnt=0;
-					if(!debug1){	
+					#if !USE_MINI_FC_FLOW_BOARD
+					if(!debug1){
+          #else
+			    if(1){
+          #endif						
           Send_TO_FC();
-					Send_TO_FC_OSENSOR();	}
+					Send_TO_FC_OSENSOR();	
+					}
 					//mark
 					if(cnt[4]++>9&&!debug1){cnt[4]=0;
 					Send_TO_FC_OVISON();
 					Send_TO_FC_OMARK();	
 					}	
 					Send_TO_FC_DEBUG();
-					if(debug1||end_ble)
-					data_per_uart(
-					xgyro*1000,flowx*1000,X_ukf[1]*1000,
-					X_ukf[3]*100,flowy*1000,ygyro*1000,
-					X_ukf[0]*100, circle.x,-circle.y,
-					(int16_t)(Yaw*10),(int16_t)(Pitch*10.0),(int16_t)(Roll*10.0),0,circle.check&&circle.connect,circle.check&&circle.connect,0);
-					MYDMA_Enable(DMA1_Channel2,SendBuff_cnt);  							
+					if(debug1){
+						switch(up_sel){	
+						case 0:
+						data_per_uart(
+						0,X_ukf[1]*100,accy*100,
+						0,X_ukf[4]*100,accx*100,
+						flowy*100,flowx*100,0,
+						(int16_t)(Yaw*10),(int16_t)(Pitch*10.0),(int16_t)(Roll*10.0),0,circle.check&&circle.connect,circle.check&&circle.connect,0);
+						break;
+						case 1:						
+						data_per_uart(
+						integrated_y*100,flow_integrated_ygyro*100,accy*100,
+						integrated_x*100,flow_integrated_xgyro*100,accx*100,
+						flowy*100,flowx*100,0,
+						(int16_t)(Yaw*10),(int16_t)(Pitch*10.0),(int16_t)(Roll*10.0),0,circle.check&&circle.connect,circle.check&&circle.connect,0);
+					
+						break;
+						}	
+				  }		MYDMA_Enable(DMA1_Channel2,SendBuff_cnt);  					
 					}	
 					//uart2
 			    Send_TO_FLOW();
@@ -218,7 +242,7 @@ int main(void)
 		#if USE_SONAR	
 		if(cnt[3]++>40){
 		#else
-		if(cnt[3]++>10){
+		if(cnt[3]++>5){
     #endif			
 		cnt[3]=0;	
     dt_sonar=(float)Get_Cycle_T(4)/1000000.;					
